@@ -1,234 +1,317 @@
+
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Whiteout Survival 3D</title>
+<title>Whiteout 3D Game</title>
 <style>
+:root{--gold:#ffc95b;--panel:#172735;--panel2:#243b4b;--text:#f3f6fa;--blue:#64c8ed}
 *{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:Arial,sans-serif;color:white;background:#83a9e9}
-button{color:white;border:1px solid #7899bf;border-radius:12px;background:linear-gradient(#466b94,#203b60);padding:9px 5px;font-size:13px;cursor:pointer}
-#top{height:120px;background:linear-gradient(#152b48,#294e7a);padding:8px;position:absolute;top:0;left:0;right:0;z-index:3}
-#stats{display:grid;grid-template-columns:55px repeat(4,1fr) 25px;gap:3px;align-items:center;text-align:center;font-size:11px}
-#avatar{height:52px;font-size:27px}
-.stat b{display:block;font-size:15px;margin-top:5px}
-#weather{margin-top:9px;font-weight:bold;font-size:20px}
-#vip{position:absolute;left:43%;bottom:6px;background:#d5ad35;padding:5px 12px;border-radius:8px}
-#scene{position:absolute;inset:120px 0 90px;overflow:hidden;background:linear-gradient(#7fa5e8,#a9c9f0)}
-#snow{position:absolute;inset:0;background-image:radial-gradient(white 1px,transparent 2px);background-size:45px 53px}
-#city{position:absolute;inset:0;transform-origin:center;transition:transform .15s}
-.tile{position:absolute;width:160px;height:100px;background:#cadcf0;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)}
-.building{position:absolute;width:85px;height:65px;transform:translate(-50%,-50%);filter:drop-shadow(4px 6px 2px #263a5055)}
-.base{position:absolute;bottom:0;width:100%;height:48px;background:#263c51;border:3px solid #5d748d;clip-path:polygon(0 15%,50% 0,100% 15%,100% 85%,50% 100%,0 85%)}
-.roof{position:absolute;top:0;left:-5px;width:95px;height:34px;background:#f0f5fb;border:2px solid #9bb3d0;clip-path:polygon(50% 0,100% 48%,50% 100%,0 48%)}
-.door{position:absolute;bottom:6px;left:40px;width:14px;height:24px;background:#72503a}
-.window{position:absolute;bottom:17px;left:10px;width:12px;height:12px;background:#f1ce70}
-.furnace{width:145px;height:125px}
-.furnace .base{height:83px;background:#1c3045;border:5px solid #627b93}
-.furnace .roof{width:155px;height:61px;background:#f5f8fd}
-.furnace .door{left:65px;width:23px;height:39px}
-.furnace .window{display:none}
-#quick{position:absolute;right:7px;top:15px;display:grid;grid-template-columns:repeat(2,82px);gap:7px}
-.quick{height:82px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;background:linear-gradient(#456b94ee,#1b3459ee);border-radius:18px}
-.quick span{font-size:27px;margin-bottom:3px}
-#leftarrow{position:absolute;left:-7px;top:45%;height:75px;width:70px;font-size:25px}
-#rightactions{position:absolute;right:8px;bottom:10px;display:flex;flex-direction:column;gap:8px}
-.round{height:60px;width:65px;font-size:27px;border-radius:20px}
-#mission{position:absolute;bottom:10px;left:10px;background:#193456ed;padding:12px;border-radius:25px;font-size:12px;max-width:calc(100% - 90px)}
-#bottom{position:absolute;bottom:0;left:0;right:0;height:90px;display:grid;grid-template-columns:repeat(6,1fr);background:linear-gradient(#285184,#142d4d);border-top:3px solid #7195be;z-index:3}
-.nav{border:0;background:transparent;box-shadow:none;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;font-size:11px;padding:2px}
-.nav span{font-size:26px}
-.nav.active{background:#456a92}
-#screen{display:none;position:absolute;z-index:5;top:120px;bottom:90px;left:0;right:0;overflow:auto;background:linear-gradient(#294b72,#142b48);padding:15px}
-#screen.show{display:block}
-#heading{display:flex;justify-content:space-between;align-items:center;font-size:22px;font-weight:bold;margin-bottom:12px}
-.card{background:#2b4c72;border:1px solid #7897bb;border-radius:13px;padding:13px;margin:9px 0}
-.card h3{margin:0 0 9px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.action{width:100%;margin-top:8px;background:linear-gradient(#4785a7,#24617e)}
-.gold{background:linear-gradient(#e4c34c,#a87818)}
-.muted{font-size:12px;color:#d0dff1}
-#toast{display:none;position:absolute;z-index:10;left:50%;bottom:105px;transform:translateX(-50%);background:#132943;padding:12px;border-radius:14px;text-align:center;max-width:90%;font-size:13px}
-#toast.show{display:block}
+body{margin:0;background:#101c27;color:var(--text);font-family:Arial,sans-serif;font-size:14px}
+button{font:inherit;color:white;border:1px solid #688397;border-radius:7px;background:linear-gradient(#405d70,#263b4c);padding:10px;cursor:pointer}
+button:disabled{opacity:.45;cursor:not-allowed}
+#app{max-width:600px;margin:auto;min-height:100vh;background:#162633;overflow:hidden}
+header{padding:10px;background:#1b2d3b;border-bottom:2px solid #405767}
+.logo{font-size:19px;font-weight:900;color:var(--gold);text-align:center;margin-bottom:10px}
+.resources{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.resource{background:#304655;border-radius:5px;padding:7px 2px;text-align:center;font-size:12px}
+.resource b{display:block;color:#ffe09a;font-size:14px;margin-top:3px}
+main{min-height:65vh}
+.screen{display:none;padding:12px}
+.screen.active{display:block}
+h2{margin:5px 0 12px;font-size:20px}
+h3{margin:5px 0 8px}
+.small{font-size:12px;color:#b9cad5}
+#city{position:relative;height:390px;overflow:hidden;border-radius:10px;background:linear-gradient(#93c6dc 0%,#d8edf0 48%,#829ba5 49%,#536d79 100%)}
+.mountain{position:absolute;bottom:48%;width:0;height:0;border-left:110px solid transparent;border-right:110px solid transparent;border-bottom:180px solid #a6c5d0}
+.m1{left:-60px}.m2{right:-70px;border-bottom-color:#d7e6e8}
+.snow{position:absolute;bottom:0;width:100%;height:52%;background:linear-gradient(165deg,#d9e8e8,#aabfc6)}
+.road{position:absolute;left:40%;bottom:-20px;width:25%;height:240px;background:#879da5;transform:skew(-20deg);border-left:5px solid #dbe5e5;border-right:5px solid #dbe5e5}
+.city-title{position:absolute;top:10px;left:10px;padding:7px;background:#243b4bd9;border-radius:6px;font-weight:bold}
+.building{position:absolute;width:104px;height:100px;filter:drop-shadow(3px 5px 3px #33495566)}
+.building .roof{position:absolute;top:0;left:0;width:104px;height:38px;background:#536b78;clip-path:polygon(50% 0,100% 45%,50% 100%,0 45%);border-bottom:2px solid #e4eded}
+.building .front{position:absolute;top:30px;left:0;width:65px;height:60px;background:#e4e8e4;clip-path:polygon(0 0,100% 25%,100% 100%,0 78%)}
+.building .side{position:absolute;top:30px;right:0;width:42px;height:60px;background:#9eafb4;clip-path:polygon(0 0,100% -15%,100% 78%,0 100%)}
+.building .door{position:absolute;bottom:9px;left:30px;width:16px;height:31px;background:#566875;border:2px solid #b8c9ce;z-index:2}
+.building .window{position:absolute;top:43px;left:7px;width:15px;height:13px;background:#6bb4cf;border:2px solid white;z-index:2}
+.furnace{width:135px;height:160px;left:calc(50% - 68px);top:78px}
+.furnace .roof{width:135px;height:54px;background:linear-gradient(135deg,#bdcbd0,#657d88,#d8e0e1)}
+.furnace .front{top:43px;width:83px;height:105px;background:linear-gradient(90deg,#8a9fa8,#e0e6e6)}
+.furnace .side{top:43px;width:54px;height:105px;background:linear-gradient(90deg,#718894,#a7b8bd)}
+.furnace .door{bottom:12px;left:35px;width:22px;height:50px;background:#334956}
+.furnace .window{top:57px;left:10px;width:19px;height:18px}
+.building-label{position:absolute;top:100%;left:-8px;width:120px;text-align:center;color:#18303b;font-weight:bold;text-shadow:0 1px white;font-size:12px}
+.b1{left:7%;top:220px}.b2{right:5%;top:220px}.b3{left:16%;top:105px;transform:scale(.75)}.b4{right:14%;top:115px;transform:scale(.8)}
+.city-controls{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:10px}
+.card{background:var(--panel);border:1px solid #405869;border-radius:9px;padding:12px;margin-bottom:10px}
+.hero-list{display:grid;gap:10px}
+.hero{display:grid;grid-template-columns:76px 1fr;gap:10px;background:#213746;border:1px solid #506879;border-radius:9px;padding:10px}
+.portrait{height:94px;border-radius:7px;background:linear-gradient(#a5c6d1,#405d70);display:flex;align-items:center;justify-content:center;font-size:40px;border:2px solid #718f9f}
+.portrait img{width:100%;height:100%;object-fit:cover;border-radius:5px}
+.hero-name{font-weight:bold;font-size:16px;color:#ffdb8c}
+.level-line{display:flex;justify-content:space-between;margin:9px 0 5px}
+.progress{height:7px;background:#0e1a22;border-radius:5px;overflow:hidden;margin-bottom:9px}
+.progress span{display:block;height:100%;background:linear-gradient(90deg,#55bfe9,#ffe08a)}
+.hero-actions{display:flex;gap:6px;flex-wrap:wrap}
+.hero-actions button{flex:1}
+.primary{background:linear-gradient(#bd8c35,#80571c);border-color:#f2ce7a}
+nav{position:sticky;bottom:0;display:grid;grid-template-columns:repeat(5,1fr);gap:3px;padding:7px;background:#101d27;border-top:1px solid #536c7c;z-index:5}
+nav button{padding:9px 2px;font-size:11px}
+nav button.active{border-color:var(--gold);color:var(--gold)}
+#toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#0d1720;border:1px solid #6c8796;padding:11px 15px;border-radius:8px;display:none;z-index:20;max-width:90%;text-align:center}
+input{width:100%;background:#10202b;color:white;border:1px solid #647f8d;border-radius:5px;padding:9px;margin:5px 0}
+footer{text-align:center;padding:12px;color:#8399a6;font-size:11px}
 </style>
 </head>
 <body>
-<header id="top">
-<div id="stats">
-<button id="avatar" data-a="profile">👨🏻</button>
-<div class="stat">♟ 1,349,894</div>
-<div class="stat">⏱<b id="timer">00:49</b></div>
-<div class="stat">🧍<b>32/32</b></div>
-<div class="stat">🪵<b id="woodtop">835.9K</b></div>
-<div class="stat">💎<b>13,735</b></div>
-<button data-a="resources" style="font-size:23px;background:none;border:0">+</button>
-</div>
-<div id="weather">🌡 −28.0°C</div>
-<div id="vip">🟡 VIP 2</div>
+<div id="app">
+<header>
+  <div class="logo">❄ WHITEOUT · SURVIVAL</div>
+  <div class="resources">
+    <div class="resource">🪵 Madeira<b id="wood">10000</b></div>
+    <div class="resource">🥩 Comida<b id="food">10000</b></div>
+    <div class="resource">⛏️ Ferro<b id="iron">5000</b></div>
+    <div class="resource">💎 Gemas<b id="gems">500</b></div>
+  </div>
 </header>
 
-<main id="scene">
-<div id="snow"></div>
-<div id="city">
-<div class="tile" style="left:0;top:20%"></div>
-<div class="tile" style="left:35%;top:12%"></div>
-<div class="tile" style="left:58%;top:35%"></div>
-<div class="tile" style="left:12%;top:56%"></div>
-<div class="tile" style="left:42%;top:65%"></div>
-<div class="building" style="left:17%;top:30%"><div class="base"></div><div class="roof"></div><div class="door"></div><div class="window"></div></div>
-<div class="building" style="left:43%;top:24%"><div class="base"></div><div class="roof"></div><div class="door"></div><div class="window"></div></div>
-<div class="building" style="left:73%;top:34%"><div class="base"></div><div class="roof"></div><div class="door"></div><div class="window"></div></div>
-<div class="building furnace" style="left:50%;top:53%"><div class="base"></div><div class="roof"></div><div class="door"></div></div>
-<div class="building" style="left:26%;top:75%"><div class="base"></div><div class="roof"></div><div class="door"></div><div class="window"></div></div>
-<div class="building" style="left:76%;top:73%"><div class="base"></div><div class="roof"></div><div class="door"></div><div class="window"></div></div>
-<div class="building" style="left:49%;top:84%"><div class="base"></div><div class="roof"></div><div class="door"></div><div class="window"></div></div>
-</div>
-
-<div id="quick">
-<button class="quick" data-a="events"><span>⚔️</span>Eventos</button>
-<button class="quick" data-a="tasks"><span>📋</span>Eventos</button>
-<button class="quick" data-a="research"><span>🧭</span>Pesquisa</button>
-<button class="quick" data-a="offers"><span>🎁</span>Ofertas</button>
-<button class="quick" data-a="starter"><span>🧑🏻‍🚀</span>Compra inicial</button>
-<button class="quick" data-a="seven"><span>🧊</span>7 dias</button>
-</div>
-<button id="leftarrow" data-a="shortcuts">➤</button>
-<div id="rightactions">
-<button class="round" data-a="ranking">⚖</button>
-<button class="round" data-a="mail">✉</button>
-</div>
-<div id="mission">📜 Limpar estágio de exploração 150 (0 / 1)</div>
-</main>
-
-<section id="screen">
-<div id="heading"><span id="title">Heróis</span><button data-a="close">✕</button></div>
-<div id="content"></div>
+<main>
+<section id="cityScreen" class="screen active">
+  <div id="city">
+    <div class="mountain m1"></div><div class="mountain m2"></div><div class="snow"></div><div class="road"></div>
+    <div class="city-title">🏔️ Sua cidade · Dia 1</div>
+    <div class="building furnace" id="furnace">
+      <div class="roof"></div><div class="front"></div><div class="side"></div><div class="door"></div><div class="window"></div><div class="building-label" id="furnaceLabel">Fornalha · Nível 1</div>
+    </div>
+    <div class="building b1"><div class="roof"></div><div class="front"></div><div class="side"></div><div class="door"></div><div class="window"></div><div class="building-label">Casa</div></div>
+    <div class="building b2"><div class="roof"></div><div class="front"></div><div class="side"></div><div class="door"></div><div class="window"></div><div class="building-label">Abrigo</div></div>
+    <div class="building b3"><div class="roof"></div><div class="front"></div><div class="side"></div><div class="door"></div><div class="window"></div><div class="building-label">Oficina</div></div>
+    <div class="building b4"><div class="roof"></div><div class="front"></div><div class="side"></div><div class="door"></div><div class="window"></div><div class="building-label">Enfermaria</div></div>
+  </div>
+  <div class="city-controls">
+    <button onclick="collect()">📦 Recolher</button>
+    <button onclick="upgradeFurnace()">🔥 Melhorar fornalha</button>
+    <button onclick="showScreen('heroesScreen')">🦸 Heróis</button>
+  </div>
+  <div class="card" style="margin-top:10px">
+    <h3>📋 Tarefas da cidade</h3>
+    <p class="small">Recolha recursos e desenvolva sua cidade. Esta versão é uma base de protótipo; as regras e os gráficos originais ainda precisam ser integrados.</p>
+  </div>
 </section>
 
-<nav id="bottom">
-<button class="nav" data-a="exploration"><span>⚔️</span>Exploração</button>
-<button class="nav" data-a="heroes"><span>🦸</span>Heróis</button>
-<button class="nav" data-a="backpack"><span>🎒</span>Mochila</button>
-<button class="nav" data-a="shop"><span>🏪</span>Loja</button>
-<button class="nav" data-a="alliance"><span>🛡️</span>Aliança</button>
-<button class="nav" data-a="world"><span>🗺️</span>Mundo</button>
+<section id="heroesScreen" class="screen">
+  <h2>🦸 Heróis</h2>
+  <p class="small">Cada herói possui seu próprio nível. O limite é 80.</p>
+  <div id="heroList" class="hero-list"></div>
+</section>
+
+<section id="buildScreen" class="screen">
+  <h2>🏗️ Construções</h2>
+  <div class="card"><h3>🔥 Fornalha</h3><p id="furnaceInfo">Nível 1</p><button class="primary" onclick="upgradeFurnace()">Melhorar fornalha</button></div>
+  <div class="card"><h3>🪵 Madeira</h3><p class="small">Recolha madeira para financiar as melhorias.</p><button onclick="collect()">Recolher recursos</button></div>
+</section>
+
+<section id="bagScreen" class="screen">
+  <h2>🎒 Recursos</h2>
+  <div class="card">🪵 Madeira: <b id="wood2">10000</b></div>
+  <div class="card">🥩 Comida: <b id="food2">10000</b></div>
+  <div class="card">⛏️ Ferro: <b id="iron2">5000</b></div>
+  <div class="card">💎 Gemas: <b id="gems2">500</b></div>
+  <button onclick="collect()">Recolher recursos</button>
+</section>
+
+<section id="settingsScreen" class="screen">
+  <h2>⚙️ Configurações</h2>
+  <div class="card">
+    <h3>Dados do protótipo</h3>
+    <p class="small">O progresso é guardado neste navegador. Limpar os dados do navegador pode apagar o progresso.</p>
+    <button onclick="resetGame()">Reiniciar progresso</button>
+  </div>
+</section>
+</main>
+
+<nav>
+  <button class="active" data-screen="cityScreen">🏔️<br>Cidade</button>
+  <button data-screen="heroesScreen">🦸<br>Heróis</button>
+  <button data-screen="buildScreen">🏗️<br>Construções</button>
+  <button data-screen="bagScreen">🎒<br>Recursos</button>
+  <button data-screen="settingsScreen">⚙️<br>Opções</button>
 </nav>
-<div id="toast"></div>
+<footer>Protótipo independente · Whiteout 3D Game</footer>
+</div>
+<div id="toast" role="status"></div>
 
 <script>
-(()=>{
-let wood=835900,food=320000,heroLevel=1,furnace=1,stage=150,items=3;
-const $=id=>document.getElementById(id);
-const screen=$('screen'),content=$('content');
-function toast(t){$('toast').textContent=t;$('toast').classList.add('show');clearTimeout(window.tt);window.tt=setTimeout(()=>$('toast').classList.remove('show'),2200)}
-function update(){ $('woodtop').textContent=wood>=1000000?(wood/1000000).toFixed(1)+'M':(wood/1000).toFixed(1)+'K';}
-function close(){screen.classList.remove('show');document.querySelectorAll('.nav').forEach(b=>b.classList.remove('active'))}
-const pages={
-heroes:['Heróis',()=>`<div class="card"><h3>⭐ Heróis</h3><p>Seleciona um herói para ver detalhes ou melhorar.</p></div><div class="grid">${[['👩🏻‍🚀','Molly'],['🧔🏻','Sergey'],['👩🏼','Natalia'],['🧑🏽','Bahiti']].map(h=>`<div class="card"><div style="font-size:38px">${h[0]}</div><b>${h[1]}</b><p class="muted">Nível ${heroLevel}</p><button class="action" data-a="detail" data-name="${h[1]}">Detalhes</button><button class="action gold" data-a="level">Melhorar (100)</button></div>`).join('')}</div>`],
-backpack:['Mochila',()=>`<div class="card"><h3>🎒 Inventário</h3><p>🪵 Madeira: ${wood.toLocaleString('pt-PT')}</p><p>🥩 Comida: ${food.toLocaleString('pt-PT')}</p><p>💎 Gemas: 13.735</p><button class="action" data-a="use">Usar baú de recursos ×${items}</button></div>`],
-shop:['Loja',()=>`<div class="card"><h3>🏪 Loja</h3><p>Loja de demonstração. As ações são locais.</p><button class="action" data-a="buywood">Comprar 1.000 madeira (100)</button><button class="action" data-a="buyfood">Comprar 1.000 comida (100)</button></div>`],
-alliance:['Aliança',()=>`<div class="card"><h3>🛡️ Aliança</h3><p>Ainda não estás numa aliança.</p><button class="action" data-a="join">Procurar aliança</button><button class="action" data-a="create">Criar aliança (1.000 madeira)</button><button class="action" data-a="help">Pedir ajuda</button></div>`],
-world:['Mundo',()=>`<div class="card"><h3>🗺️ Mapa do mundo</h3><div style="height:160px;background:linear-gradient(135deg,#9cc7f1,#e4f0ff);border-radius:12px;display:grid;place-items:center;font-size:35px">❄️ 🏔️ 🌲</div><p>Coordenadas X 125 · Y 280</p><button class="action" data-a="gather">Recolher madeira</button><button class="action" data-a="hunt">Caçar fera</button><button class="action" data-a="home">Voltar à cidade</button></div>`],
-exploration:['Exploração',()=>`<div class="card"><h3>⚔️ Exploração — estágio ${stage}</h3><p>Escolhe iniciar uma batalha de demonstração.</p><button class="action" data-a="battle">Iniciar batalha</button><button class="action" data-a="formation">Formação de heróis</button></div>`],
-events:['Eventos',()=>`<div class="card"><h3>⚔️ Eventos ativos</h3><p>Completa tarefas para receber recursos.</p><button class="action" data-a="claim">Receber recompensa</button></div>`],
-tasks:['Tarefas',()=>`<div class="card"><h3>📋 Tarefas diárias</h3><p>Construir edifício · Melhorar herói · Explorar</p><button class="action" data-a="claim">Receber recompensa</button></div>`],
-research:['Pesquisa',()=>`<div class="card"><h3>🧭 Centro de pesquisa</h3><button class="action" data-a="research">Pesquisa económica (250 madeira)</button><button class="action" data-a="research">Pesquisa militar (250 madeira)</button></div>`],
-offers:['Ofertas',()=>`<div class="card"><h3>🎁 Ofertas</h3><p>Pacotes de demonstração.</p><button class="action" data-a="claim">Recolher oferta grátis</button></div>`],
-starter:['Compra inicial',()=>`<div class="card"><h3>🧑🏻‍🚀 Pacote inicial</h3><button class="action gold" data-a="claim">Receber pacote grátis</button></div>`],
-seven:['Evento de 7 dias',()=>`<div class="card"><h3>🧊 Recompensas diárias</h3><p>Dia 1 — recursos</p><p>Dia 2 — experiência</p><button class="action" data-a="claim">Receber recompensa</button></div>`],
-ranking:['Classificação',()=>`<div class="card"><h3>⚖ Classificação</h3><p>1. Tu — 1.349.894 de poder</p><p>2. Jogador do Norte — 980.200</p></div>`],
-mail:['Correio',()=>`<div class="card"><h3>✉ Correio</h3><p>Bem-vindo à cidade gelada!</p><button class="action" data-a="claim">Receber presente</button></div>`],
-profile:['Perfil',()=>`<div class="card"><h3>👨🏻 Perfil do jogador</h3><p>Poder: 1.349.894</p><p>VIP 2 · Fornalha nível ${furnace}</p><button class="action" data-a="rename">Editar nome</button></div>`],
-resources:['Recursos',()=>`<div class="card"><h3>📦 Recursos</h3><p>🪵 Madeira: ${wood.toLocaleString('pt-PT')}</p><p>🥩 Comida: ${food.toLocaleString('pt-PT')}</p><button class="action" data-a="gather">Recolher +1.000 madeira</button><button class="action" data-a="food">Recolher +1.000 comida</button></div>`],
-shortcuts:['Atalhos',()=>`<div class="grid"><button data-a="build">🏠 Construir casa</button><button data-a="upgrade">🔥 Melhorar fornalha</button><button data-a="gather">🪵 Madeira</button><button data-a="food">🥩 Comida</button></div>`]
+"use strict";
+
+const MAX_HERO_LEVEL = 80;
+const INITIAL_STATE = {
+  wood:10000, food:10000, iron:5000, gems:500, furnace:1,
+  heroes:[
+    {id:"hero-alba",name:"Alba",level:1,icon:"❄️",color:"#91cce2"},
+    {id:"hero-boris",name:"Boris",level:1,icon:"🛡️",color:"#b7a1df"},
+    {id:"hero-clara",name:"Clara",level:1,icon:"🏹",color:"#e5a1a9"},
+    {id:"hero-diego",name:"Diego",level:1,icon:"🔥",color:"#e4b66b"},
+    {id:"hero-elsa",name:"Elsa",level:1,icon:"✨",color:"#8edbd4"}
+  ]
 };
-function open(k){if(!pages[k])return; $('title').textContent=pages[k][0];content.innerHTML=pages[k][1]();screen.classList.add('show');document.querySelectorAll('.nav').forEach(b=>b.classList.toggle('active',b.dataset.a===k))}
-function build(){if(wood<100){toast('Madeira insuficiente');return}wood-=100;let e=document.createElement('div');e.className='building';e.style.left=(12+Math.random()*76)+'%';e.style.top=(35+Math.random()*52)+'%';e.innerHTML='<div class="base"></div><div class="roof"></div><div class="door"></div><div class="window"></div>';$('city').appendChild(e);update();toast('Casa construída!')}
-document.addEventListener('click',e=>{
-const b=e.target.closest('[data-a]');if(!b)return;
-switch(b.dataset.a){
-case'close':close();break;
-case'heroes':case'backpack':case'shop':case'alliance':case'world':case'exploration':case'events':case'tasks':case'research':case'offers':case'starter':case'seven':case'ranking':case'mail':case'profile':case'resources':case'shortcuts':open(b.dataset.a);break;
-case'build':build();break;
-case'gather':wood+=1000;update();toast('+1.000 madeira recolhida');if(screen.classList.contains('show'))open('world');break;
-case'food':food+=1000;toast('+1.000 comida recolhida');open('resources');break;
-case'upgrade':if(wood<500){toast('Precisas de 500 madeira');break}wood-=500;furnace++;update();toast('Fornalha nível '+furnace);open('shortcuts');break;
-case'level':if(wood<100){toast('Precisas de 100 madeira');break}wood-=100;heroLevel++;update();toast('Herói melhorado para nível '+heroLevel);open('heroes');break;
-case'detail':toast('Detalhes de '+b.dataset.name+' — demonstração');break;
-case'use':if(items>0){items--;wood+=500;update();toast('Baú usado: +500 madeira')}else toast('Sem itens');open('backpack');break;
-case'buywood':wood+=1000;update();toast('Compra demonstrativa: +1.000 madeira');open('shop');break;
-case'buyfood':food+=1000;toast('Compra demonstrativa: +1.000 comida');open('shop');break;
-case'join':toast('A procurar alianças...');break;
-case'create':if(wood>=1000){wood-=1000;update();toast('Aliança de demonstração criada')}else toast('Precisas de 1.000 madeira');open('alliance');break;
-case'help':toast('Pedido de ajuda enviado');break;
-case'home':close();toast('De volta à cidade');break;
-case'battle':stage++;wood+=250;food+=250;update();toast('Vitória de demonstração!');open('exploration');break;
-case'formation':toast('Formação demonstrativa: infantaria, lanceiros e atiradores');break;
-case'claim':wood+=500;food+=500;update();toast('Recompensa: +500 madeira e comida');break;
-case'research':if(wood>=250){wood-=250;update();toast('Pesquisa iniciada')}else toast('Precisas de 250 madeira');open('research');break;
-case'hunt':food+=500;toast('Caça concluída: +500 comida');break;
-case'rename':{let n=prompt('Novo nome do jogador');if(n)toast('Nome alterado para '+n);break}
+
+let state;
+try {
+  const saved = localStorage.getItem("whiteoutPrototypeStateV2");
+  state = saved ? JSON.parse(saved) : structuredClone(INITIAL_STATE);
+  if (!Array.isArray(state.heroes) || state.heroes.length !== INITIAL_STATE.heroes.length) throw new Error("invalid state");
+  state.heroes.forEach((h,i) => {
+    if (!h.id || !Number.isFinite(h.level)) throw new Error("invalid hero");
+    h.level = Math.max(1, Math.min(MAX_HERO_LEVEL, Math.floor(h.level)));
+    h.name = INITIAL_STATE.heroes[i].name;
+    h.icon = INITIAL_STATE.heroes[i].icon;
+    h.color = INITIAL_STATE.heroes[i].color;
+  });
+} catch(e) {
+  state = structuredClone(INITIAL_STATE);
 }
+
+function saveState(){
+  try { localStorage.setItem("whiteoutPrototypeStateV2", JSON.stringify(state)); }
+  catch(e) { console.warn("Não foi possível guardar o progresso.",e); }
+}
+
+function toast(message){
+  const el=document.getElementById("toast");
+  el.textContent=message;
+  el.style.display="block";
+  clearTimeout(toast.timer);
+  toast.timer=setTimeout(()=>el.style.display="none",2300);
+}
+
+function renderResources(){
+  ["wood","food","iron","gems"].forEach(key=>{
+    document.getElementById(key).textContent=Math.floor(state[key]).toLocaleString("pt-BR");
+    const second=document.getElementById(key+"2");
+    if(second) second.textContent=Math.floor(state[key]).toLocaleString("pt-BR");
+  });
+  document.getElementById("furnaceLabel").textContent="Fornalha · Nível "+state.furnace;
+  document.getElementById("furnaceInfo").textContent="Nível "+state.furnace;
+}
+
+function renderHeroes(){
+  const list=document.getElementById("heroList");
+  list.innerHTML="";
+  state.heroes.forEach(hero=>{
+    const card=document.createElement("article");
+    card.className="hero";
+    card.dataset.heroId=hero.id;
+
+    const portrait=document.createElement("div");
+    portrait.className="portrait";
+    portrait.style.background="linear-gradient(145deg,"+hero.color+",#263d4d)";
+    portrait.textContent=hero.icon;
+    portrait.setAttribute("aria-label","Retrato ilustrativo de "+hero.name);
+
+    const info=document.createElement("div");
+    const name=document.createElement("div");
+    name.className="hero-name";
+    name.textContent=hero.name;
+
+    const line=document.createElement("div");
+    line.className="level-line";
+    const level=document.createElement("span");
+    level.textContent="Nível "+hero.level;
+    level.dataset.heroLevel="";
+    const max=document.createElement("span");
+    max.className="small";
+    max.textContent=hero.level>=MAX_HERO_LEVEL?"MÁXIMO":"Máximo 80";
+    line.append(level,max);
+
+    const progress=document.createElement("div");
+    progress.className="progress";
+    const fill=document.createElement("span");
+    fill.style.width=(hero.level/MAX_HERO_LEVEL*100)+"%";
+    progress.appendChild(fill);
+
+    const actions=document.createElement("div");
+    actions.className="hero-actions";
+    const upgrade=document.createElement("button");
+    upgrade.className="primary";
+    upgrade.dataset.heroUpgrade="";
+    upgrade.textContent=hero.level>=MAX_HERO_LEVEL?"NÍVEL MÁXIMO 80":"⬆ Melhorar";
+    upgrade.disabled=hero.level>=MAX_HERO_LEVEL;
+    upgrade.addEventListener("click",()=>upgradeHero(hero.id));
+
+    const details=document.createElement("button");
+    details.textContent="Detalhes";
+    details.addEventListener("click",()=>toast(hero.name+" · Nível "+hero.level+" de 80"));
+
+    actions.append(upgrade,details);
+    info.append(name,line,progress,actions);
+    card.append(portrait,info);
+    list.appendChild(card);
+  });
+}
+
+function upgradeHero(id){
+  const hero=state.heroes.find(h=>h.id===id);
+  if(!hero) return;
+  if(hero.level>=MAX_HERO_LEVEL){
+    hero.level=MAX_HERO_LEVEL;
+    saveState();
+    renderHeroes();
+    toast(hero.name+" já está no nível máximo 80.");
+    return;
+  }
+  hero.level=Math.min(MAX_HERO_LEVEL,hero.level+1);
+  saveState();
+  renderHeroes();
+  toast(hero.name+" evoluiu para o nível "+hero.level+".");
+}
+
+function collect(){
+  state.wood+=500;
+  state.food+=500;
+  state.iron+=200;
+  saveState();
+  renderResources();
+  toast("Recursos recolhidos!");
+}
+
+function upgradeFurnace(){
+  const cost=state.furnace*1000;
+  if(state.wood<cost || state.iron<cost/2){
+    toast("Recursos insuficientes. Precisa de "+cost+" madeira e "+cost/2+" ferro.");
+    return;
+  }
+  state.wood-=cost;
+  state.iron-=cost/2;
+  state.furnace++;
+  saveState();
+  renderResources();
+  toast("Fornalha melhorada para o nível "+state.furnace+".");
+}
+
+function showScreen(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("active",s.id===id));
+  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.screen===id));
+  if(id==="heroesScreen") renderHeroes();
+}
+
+document.querySelectorAll("nav button").forEach(button=>{
+  button.addEventListener("click",()=>showScreen(button.dataset.screen));
 });
-let zoom=1,dx=0,dy=0,px=0,py=0,pinch=0;
-$('scene').addEventListener('touchstart',e=>{if(e.touches.length===1){px=e.touches[0].clientX;py=e.touches[0].clientY}else if(e.touches.length===2){pinch=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY)}},{passive:true});
-$('scene').addEventListener('touchmove',e=>{if(e.touches.length===2){let d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);zoom=Math.max(.75,Math.min(1.4,zoom+(d-pinch)*.001));pinch=d}else if(e.touches.length===1){dx=Math.max(-70,Math.min(70,dx+(e.touches[0].clientX-px)*.25));dy=Math.max(-70,Math.min(70,dy+(e.touches[0].clientY-py)*.25));px=e.touches[0].clientX;py=e.touches[0].clientY}$('city').style.transform=`translate(${dx}px,${dy}px) scale(${zoom})`},{passive:true});
-let t=49;setInterval(()=>{t=t>0?t-1:59;$('timer').textContent='00:'+String(t).padStart(2,'0')},1000);
-})();
+
+function resetGame(){
+  if(!confirm("Apagar o progresso deste protótipo e recomeçar?")) return;
+  state=structuredClone(INITIAL_STATE);
+  saveState();
+  renderResources();
+  renderHeroes();
+  showScreen("cityScreen");
+  toast("Progresso reiniciado.");
+}
+
+renderResources();
+renderHeroes();
 </script>
 </body>
 </html>
-<script>
-(function () {
-  const HERO_MAX_LEVEL = 80;
-
-  function corrigirLimiteHerois() {
-    document.querySelectorAll('[data-a="hero"]').forEach(function (botao) {
-      const painel = botao.closest('section, article, div');
-      if (!painel) return;
-
-      const texto = painel.innerText || '';
-      if (!/herói|heroi|hero/i.test(texto)) return;
-
-      const correspondencia = texto.match(/nível\s*[: ]*\s*(\d+)/i);
-      if (!correspondencia) return;
-
-      const nivel = parseInt(correspondencia[1], 10);
-
-      if (nivel >= HERO_MAX_LEVEL) {
-        botao.disabled = true;
-        botao.textContent = 'NÍVEL MÁXIMO 80';
-        botao.style.opacity = '0.55';
-        botao.style.cursor = 'not-allowed';
-        botao.setAttribute('aria-disabled', 'true');
-      }
-    });
-  }
-
-  document.addEventListener('click', function (evento) {
-    const botao = evento.target.closest('[data-a="hero"]');
-    if (!botao) return;
-
-    const painel = botao.closest('section, article, div');
-    if (!painel) return;
-
-    const texto = painel.innerText || '';
-    const correspondencia = texto.match(/nível\s*[: ]*\s*(\d+)/i);
-
-    if (correspondencia &&
-        parseInt(correspondencia[1], 10) >= HERO_MAX_LEVEL) {
-      evento.preventDefault();
-      evento.stopImmediatePropagation();
-      botao.disabled = true;
-      botao.textContent = 'NÍVEL MÁXIMO 80';
-    }
-  }, true);
-
-  new MutationObserver(corrigirLimiteHerois).observe(
-    document.body,
-    { childList: true, subtree: true, characterData: true }
-  );
-
-  corrigirLimiteHerois();
-})();
-</script>
