@@ -1,129 +1,135 @@
-
 <!DOCTYPE html>
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Whiteout 3D</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;overflow:hidden;background:#b8d9e8;font-family:Arial;color:white}
-#hud{position:fixed;top:12px;left:12px;z-index:2;background:#142535dd;padding:12px;border-radius:10px}
-#hud h2{margin:0 0 8px;font-size:18px}
-button{background:#287fa3;color:white;border:0;border-radius:7px;padding:10px;margin:3px}
-#help{position:fixed;bottom:12px;left:12px;background:#142535dd;padding:9px;border-radius:8px;font-size:12px}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#789ce0;font-family:Arial,sans-serif;color:white;touch-action:none}
+canvas{display:block}
+#topbar{position:fixed;z-index:3;top:0;left:0;right:0;padding:5px;background:linear-gradient(#17253bef,#314d72ef);border-bottom:2px solid #8aa9c9}
+.row{display:flex;align-items:center;gap:5px;min-height:32px}
+.avatar{font-size:25px;border:2px solid white;border-radius:10px;padding:5px}
+.stat{flex:1;text-align:center;font-size:11px;font-weight:bold;white-space:nowrap}
+.stat b{display:block;font-size:14px}
+.vip{background:#d4ad37;padding:6px;border-radius:6px;font-size:12px}
+.plus{font-size:24px;color:#42e95c}
+#quick{position:fixed;right:5px;top:100px;z-index:3;display:grid;grid-template-columns:repeat(2,58px);gap:7px}
+.quick{height:60px;background:linear-gradient(145deg,#526b8c,#263e60);border:1px solid #a8c0d7;border-radius:11px;text-align:center;font-size:24px;padding-top:4px}
+.quick small{display:block;font-size:9px;font-weight:bold}
+#lefttab{position:fixed;left:0;top:45%;z-index:3;background:#1d3559;border:2px solid #9cb7d3;border-left:0;border-radius:0 9px 9px 0;padding:15px 7px;font-size:22px}
+#task{position:fixed;left:8px;bottom:72px;z-index:3;background:#1a2c45e8;border-radius:18px;padding:10px;font-size:11px;font-weight:bold;max-width:78%}
+#rightbuttons{position:fixed;right:7px;bottom:72px;z-index:3;display:flex;flex-direction:column;gap:8px}
+.round{width:49px;height:49px;border-radius:14px;background:linear-gradient(#8ca9cb,#344f75);border:2px solid #7c9abd;display:grid;place-items:center;font-size:24px}
+#bottom{position:fixed;z-index:4;bottom:0;left:0;right:0;height:65px;display:flex;justify-content:space-around;align-items:center;background:linear-gradient(#284a78,#172f55);border-top:2px solid #6384ad}
+.nav{flex:1;text-align:center;font-size:10px;font-weight:bold}
+.nav span{display:block;font-size:22px;margin-bottom:3px}
+.nav.active{color:#bde8ff}
+#build{position:fixed;z-index:5;left:50%;bottom:78px;transform:translateX(-50%);display:none;background:#243b57;border:1px solid #bdd2e5;border-radius:12px;padding:12px;width:90%;max-width:360px}
+#build h3{margin:0 0 8px;font-size:14px}
+#build button{width:100%;padding:11px;margin:3px 0;border:1px solid #aac1d7;border-radius:8px;color:white;background:#477ba2;font-weight:bold}
+#toast{position:fixed;z-index:8;top:175px;left:50%;transform:translateX(-50%);background:#192b43;border:1px solid #b3cde4;border-radius:9px;padding:10px;font-size:12px;display:none;max-width:90%;text-align:center}
 </style>
 </head>
 <body>
-<div id="hud">
-<h2>❄️ WHITEOUT 3D</h2>
-<div>🔥 Fornalha: Nível 1</div>
-<div>🪵 Madeira: <span id="wood">50000000</span></div>
-<div>🥩 Comida: 3000000</div>
-<button id="build">Construir casa (100)</button>
+<div id="topbar">
+ <div class="row">
+  <div class="avatar">🧑🏻</div>
+  <div class="stat">♟ 1,349,894</div>
+  <div class="stat">⏱<b>00:49</b></div>
+  <div class="stat">🧍<b>32/32</b></div>
+  <div class="stat">🪵<b id="wood">835.9K</b></div>
+  <div class="stat">💎<b>13,735</b></div>
+  <div class="plus" id="plus">+</div>
+ </div>
+ <div class="row"><div class="stat" style="text-align:left">🌡<b>−28.0°C</b></div><div class="vip" id="vip">🟡 VIP 2</div><div class="stat">🏪</div></div>
 </div>
-<div id="help">Arraste para girar a câmera • Use dois dedos para zoom</div>
+<div id="quick">
+ <div class="quick">🗡️<small>Eventos</small></div><div class="quick">📋<small>Eventos</small></div>
+ <div class="quick">🧭<small>Pesquisa</small></div><div class="quick">🎁<small>Ofertas</small></div>
+ <div class="quick">👩🏼‍🚀<small>Compra inicial</small></div><div class="quick">🧊<small>7 dias</small></div>
+</div>
+<div id="lefttab">➤</div>
+<div id="task">📜 Limpar estágio de exploração 150 (0 / 1)</div>
+<div id="rightbuttons"><div class="round">⚖</div><div class="round">✉️</div></div>
+<div id="bottom">
+ <div class="nav"><span>⚔️</span>Exploração</div>
+ <div class="nav"><span>🦸</span>Heróis</div>
+ <div class="nav"><span>🎒</span>Mochila</div>
+ <div class="nav"><span>🏪</span>Loja</div>
+ <div class="nav"><span>🛡️</span>Aliança</div>
+ <div class="nav active"><span>🗺️</span>Mundo</div>
+</div>
+<div id="build"><h3>CONSTRUIR NA CIDADE</h3><button data-type="house">🏠 Casa — 100 madeira</button><button data-type="lumber">🪵 Serraria — 500 madeira</button><button data-type="clinic">✚ Enfermaria — 800 madeira</button><button id="close">Fechar</button></div>
+<div id="toast"></div>
 <script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
-
 const scene=new THREE.Scene();
-scene.background=new THREE.Color(0xb8d9e8);
-scene.fog=new THREE.Fog(0xb8d9e8,35,100);
-
-const camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,0.1,200);
-camera.position.set(18,22,25);
-
-const renderer=new THREE.WebGLRenderer({antialias:true});
+scene.background=new THREE.Color(0x789ce0);
+scene.fog=new THREE.Fog(0x789ce0,45,105);
+const camera=new THREE.PerspectiveCamera(37,innerWidth/innerHeight,.1,200);
+const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
 renderer.setSize(innerWidth,innerHeight);
 renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
 renderer.shadowMap.enabled=true;
+renderer.outputColorSpace=THREE.SRGBColorSpace;
 document.body.appendChild(renderer.domElement);
-
-scene.add(new THREE.HemisphereLight(0xe8f6ff,0x637080,2));
-const sun=new THREE.DirectionalLight(0xffffff,3);
-sun.position.set(-15,25,10);
-sun.castShadow=true;
-scene.add(sun);
-
-const ground=new THREE.Mesh(
-new THREE.PlaneGeometry(100,100),
-new THREE.MeshStandardMaterial({color:0xe7f1f4})
-);
-ground.rotation.x=-Math.PI/2;
-ground.receiveShadow=true;
-scene.add(ground);
-
-function box(x,y,z,w,h,d,color){
-const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshStandardMaterial({color}));
-m.position.set(x,y,z);
-m.castShadow=true;
-m.receiveShadow=true;
-scene.add(m);
-return m;
+scene.add(new THREE.HemisphereLight(0xd9e8ff,0x3c4b70,2));
+const sun=new THREE.DirectionalLight(0xffe9d0,3);
+sun.position.set(-15,28,15);sun.castShadow=true;scene.add(sun);
+const mat=(c)=>new THREE.MeshStandardMaterial({color:c,roughness:.9});
+const snow=mat(0xe8f0fa),snow2=mat(0xb9cce2),wall=mat(0x394958),wall2=mat(0x53697b),roof=mat(0x263a4d),wood=mat(0x5b4638),pine=mat(0x3d5d78),pineSnow=mat(0xaec5df);
+function box(p,x,y,z,w,h,d,m){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;p.add(o);return o}
+function cone(p,x,y,z,r,h,m,n=4){const o=new THREE.Mesh(new THREE.ConeGeometry(r,h,n),m);o.position.set(x,y,z);o.rotation.y=Math.PI/4;o.castShadow=true;p.add(o);return o}
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(130,130),snow2);ground.rotation.x=-Math.PI/2;scene.add(ground);
+for(let i=0;i<100;i++){const x=(Math.random()-.5)*90,z=(Math.random()-.5)*90;if(Math.abs(x)<17&&Math.abs(z)<17)continue;const o=new THREE.Mesh(new THREE.DodecahedronGeometry(.3+Math.random()*1.4,0),i%2?snow:snow2);o.position.set(x,.05,z);o.scale.y=.25;scene.add(o)}
+function tree(x,z,s=1){const g=new THREE.Group();g.position.set(x,0,z);g.scale.setScalar(s);box(g,0,.55,0,.25,1.1,.25,wood);for(let i=0;i<3;i++){cone(g,0,1.45+i*.7,0,1-i*.17,2,pine,7);cone(g,0,1.62+i*.7,0,.83-i*.15,1.7,pineSnow,7)}scene.add(g)}
+for(let i=0;i<70;i++){const x=(Math.random()-.5)*72,z=(Math.random()-.5)*72;if(Math.abs(x)<19&&Math.abs(z)<19)continue;tree(x,z,.5+Math.random()*.7)}
+function road(x,z,w,d){box(scene,x,.035,z,w,.07,d,snow)}
+road(0,0,7,60);road(0,0,60,7);
+function house(x,z,type='house'){
+ const g=new THREE.Group();g.position.set(x,0,z);
+ box(g,0,.22,0,4.5,.44,4,snow2);box(g,0,1.55,0,3.5,2.35,3,wall2);
+ const a=box(g,-.88,2.75,0,1.95,.28,3.55,roof);a.rotation.z=-.55;
+ const b=box(g,.88,2.75,0,1.95,.28,3.55,roof);b.rotation.z=.55;
+ box(g,0,3.32,0,3.2,.12,3.35,snow);box(g,0,1,1.54,.75,1.55,.12,wood);
+ for(const xx of [-1.12,1.12])box(g,xx,1.75,1.57,.55,.63,.1,mat(0xffd995));
+ if(type==='clinic'){box(g,0,2.8,0,1.5,.15,.42,mat(0x55a77b));box(g,0,2.8,0,.42,.15,1.4,mat(0x55a77b))}
+ if(type==='lumber'){for(let i=0;i<3;i++)box(g,-.8+i*.8,.5,2.2,.22,.22,1.1,wood)}
+ scene.add(g);return g
 }
-
-function house(x,z,color=0x8c9eaa){
-box(x,1,z,3,2,3,color);
-const roof=new THREE.Mesh(new THREE.ConeGeometry(2.5,1.5,4),new THREE.MeshStandardMaterial({color:0x465564}));
-roof.position.set(x,2.7,z);
-roof.rotation.y=Math.PI/4;
-roof.castShadow=true;
-scene.add(roof);
-box(x,0.8,z+1.52,0.7,1.5,0.08,0x493d32);
-box(x-0.8,1.3,z+1.54,0.55,0.55,0x9bd9f0);
-}
-
-for(let i=0;i<8;i++){
-house(-12+(i%4)*8,-10+Math.floor(i/4)*18,i%2?0x9cabb6:0x718d9d);
-}
-
-box(0,1.5,0,5,3,5,0x647783);
-box(0,3.6,0,4,1.5,4,0xdbe8ed);
-box(0,4.6,0,2,1,2,0x657d8a);
-box(0,0.7,2.55,1,1.4,0.1,0x49382e);
-
-const trees=[];
-for(let i=0;i<35;i++){
-const x=(Math.random()-.5)*65,z=(Math.random()-.5)*65;
-if(Math.abs(x)<10&&Math.abs(z)<10)continue;
-const trunk=box(x,0.8,z,0.45,1.6,0.45,0x66503d);
-const leaves=new THREE.Mesh(new THREE.ConeGeometry(1.7,4,6),new THREE.MeshStandardMaterial({color:0x466c70}));
-leaves.position.set(x,3,z);
-scene.add(leaves);
-}
-
-let wood=500;
-document.getElementById('build').onclick=()=>{
-if(wood<100){alert('Madeira insuficiente!');return}
-wood-=100;
-document.getElementById('wood').textContent=wood;
-house((Math.random()-.5)*18,(Math.random()-.5)*18,0xb3c2c9);
-};
-
-let down=false,lastX=0,lastY=0,angle=Math.PI/4,dist=34;
-renderer.domElement.addEventListener('pointerdown',e=>{down=true;lastX=e.clientX;lastY=e.clientY});
-addEventListener('pointerup',()=>down=false);
-addEventListener('pointermove',e=>{
-if(!down)return;
-angle-=(e.clientX-lastX)*0.008;
-dist=Math.max(12,Math.min(55,dist+(e.clientY-lastY)*0.08));
-lastX=e.clientX;lastY=e.clientY;
-});
-renderer.domElement.addEventListener('wheel',e=>{dist=Math.max(12,Math.min(55,dist+e.deltaY*.03))});
-
-function animate(){
-requestAnimationFrame(animate);
-camera.position.set(Math.sin(angle)*dist,dist*.65,Math.cos(angle)*dist);
-camera.lookAt(0,0,0);
-renderer.render(scene,camera);
-}
+function furnace(){const g=new THREE.Group();box(g,0,.3,0,8,.6,7,snow2);box(g,0,1.5,0,6.5,2.5,5.5,wall);box(g,0,2.85,0,7,.3,6,roof);box(g,0,3.55,0,5.5,1.2,4.7,wall2);box(g,0,4.25,0,5.9,.28,5.1,snow);cone(g,0,5.1,0,3.6,2.1,roof);cone(g,0,5.25,0,3.45,1.8,snow);box(g,0,6.3,0,1.4,1.3,1.4,wall);box(g,0,7,0,1.65,.25,1.65,snow);scene.add(g)}
+furnace();
+const buildings=[];
+const positions=[[-12,-10],[-7,-12],[7,-12],[12,-9],[-14,-4],[14,-3],[-13,5],[13,5],[-11,11],[-6,13],[6,12],[11,10],[-18,1],[18,1],[-5,-17],[5,-17]];
+positions.forEach((p,i)=>buildings.push({type:'house',obj:house(p[0],p[1],i===8?'clinic':'house')}));
+  let woodCount=835900;
+function update(){document.getElementById('wood').textContent=woodCount>999999?(woodCount/1e6).toFixed(1)+'M':woodCount>999?(woodCount/1e3).toFixed(1)+'K':woodCount}
+let toastT;
+function toast(s){const t=document.getElementById('toast');t.textContent=s;t.style.display='block';clearTimeout(toastT);toastT=setTimeout(()=>t.style.display='none',2200)}
+document.getElementById('lefttab').onclick=()=>document.getElementById('build').style.display='block';
+document.getElementById('close').onclick=()=>document.getElementById('build').style.display='none';
+document.querySelectorAll('.quick').forEach((e,i)=>e.onclick=()=>toast(['Eventos e missões','Lista de eventos','Pesquisa','Ofertas','Compra inicial','Recompensas de 7 dias'][i]+' — demonstração'));
+document.querySelectorAll('.nav').forEach(e=>e.onclick=()=>{document.querySelectorAll('.nav').forEach(n=>n.classList.remove('active'));e.classList.add('active');toast(e.textContent.trim()+' — tela demonstrativa')});
+document.querySelectorAll('.round').forEach((e,i)=>e.onclick=()=>toast(i?'Mensagens':'Classificação'));
+document.getElementById('plus').onclick=()=>toast('Recursos — demonstração');
+document.getElementById('vip').onclick=()=>toast('VIP 2 — demonstração');
+function freeSpot(){for(let i=0;i<80;i++){let x=Math.round((Math.random()-.5)*30/2)*2,z=Math.round((Math.random()-.5)*30/2)*2;if(Math.abs(x)<5||Math.abs(z)<5)continue;return [x,z]}return [20,20]}
+document.querySelectorAll('[data-type]').forEach(btn=>btn.onclick=()=>{const type=btn.dataset.type,cost=type==='house'?100:type==='lumber'?500:800;if(woodCount<cost){toast('Madeira insuficiente');return}woodCount-=cost;const p=freeSpot();buildings.push({type,obj:house(p[0],p[1],type)});update();document.getElementById('build').style.display='none';toast('Construção concluída')});
+let angle=.7,dist=42,down=false,lastX=0,lastY=0;
+function cam(){camera.position.set(Math.sin(angle)*dist,dist*.75,Math.cos(angle)*dist);camera.lookAt(0,1,0)}cam();
+renderer.domElement.addEventListener('pointerdown',e=>{down=true;lastX=e.clientX;lastY=e.clientY;renderer.domElement.setPointerCapture(e.pointerId)});
+renderer.domElement.addEventListener('pointerup',()=>down=false);
+renderer.domElement.addEventListener('pointercancel',()=>down=false);
+renderer.domElement.addEventListener('pointermove',e=>{if(!down)return;angle-=(e.clientX-lastX)*.007;dist=Math.max(27,Math.min(62,dist+(e.clientY-lastY)*.04));lastX=e.clientX;lastY=e.clientY;cam()});
+renderer.domElement.addEventListener('wheel',e=>{dist=Math.max(25,Math.min(65,dist+e.deltaY*.04));cam()},{passive:true});
+const flakes=[];
+for(let i=0;i<140;i++){const f=new THREE.Mesh(new THREE.SphereGeometry(.04,5,5),new THREE.MeshBasicMaterial({color:0xffffff}));f.position.set((Math.random()-.5)*60,Math.random()*24+3,(Math.random()-.5)*60);scene.add(f);flakes.push(f)}
+function animate(){requestAnimationFrame(animate);flakes.forEach(f=>{f.position.y-=.035;if(f.position.y<0)f.position.y=25});renderer.render(scene,camera)}
 animate();
-
-addEventListener('resize',()=>{
-camera.aspect=innerWidth/innerHeight;
-camera.updateProjectionMatrix();
-renderer.setSize(innerWidth,innerHeight);
-});
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);cam()});
+update();
 </script>
 </body>
 </html>
