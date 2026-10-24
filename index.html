@@ -1,474 +1,116 @@
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Frozen Kingdom — 3D Strategy</title>
-<style>
-*{box-sizing:border-box}
-:root{--gold:#f4c875;--panel:#172735;--line:#526b7b}
-body{margin:0;background:#0a1520;color:#f4f6f8;font-family:Arial,sans-serif}
-button{border:1px solid #708b9b;background:linear-gradient(#405e73,#203747);color:white;border-radius:6px;padding:10px;cursor:pointer}
-button:disabled{opacity:.4}
-#app{max-width:650px;margin:auto;min-height:100dvh;background:#142532}
-header{background:#101e2a;padding:10px;border-bottom:1px solid var(--line)}
-.logo{text-align:center;font-weight:900;font-size:19px;color:var(--gold);padding:5px}
-.resources{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:7px}
-.resource{background:#293e4c;border-radius:5px;padding:7px 2px;text-align:center;font-size:11px}
-.resource b{display:block;color:#ffe0a0;margin-top:4px;font-size:14px}
-#world{height:56dvh;min-height:350px;max-height:540px;position:relative;background:#b7d5df;overflow:hidden;touch-action:none}
-#view{width:100%;height:100%;display:block;touch-action:none}
-#cityLabel{position:absolute;top:9px;left:9px;background:#152b3cdd;padding:8px;border-radius:6px;font-size:12px;pointer-events:none}
-#hint{position:absolute;bottom:8px;left:8px;right:8px;text-align:center;color:#203847;text-shadow:0 1px #fff;font-size:11px;pointer-events:none}
-#loadError{display:none;position:absolute;inset:30% 8px auto;background:#142735eF;padding:14px;border-radius:8px}
-.screen{display:none;padding:12px}
-.screen.active{display:block}
-h2{font-size:20px;margin:5px 0 12px}
-h3{margin:5px 0 8px}
-.small{font-size:12px;color:#b9cbd5;line-height:1.5}
-.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:8px}
-.card{background:var(--panel);border:1px solid #3e5869;border-radius:8px;padding:11px;margin:8px 0}
-.hero{display:grid;grid-template-columns:76px 1fr;gap:10px;background:#203748;border:1px solid var(--line);border-radius:8px;padding:9px;margin-bottom:9px}
-.portrait{height:94px;border:2px solid #718d9f;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:36px;background:linear-gradient(145deg,#b7dce5,#304a5b)}
-.heroName{color:var(--gold);font-size:16px;font-weight:bold}
-.row{display:flex;justify-content:space-between;gap:5px;margin:8px 0;font-size:12px}
-.bar{height:7px;background:#09141c;border-radius:5px;overflow:hidden;margin:6px 0 9px}
-.bar span{display:block;height:100%;background:linear-gradient(90deg,#56bfe9,#ffdc85)}
-.heroActions{display:flex;gap:5px}
-.heroActions button{flex:1;font-size:12px}
-.gold{background:linear-gradient(#ba8b38,#79531d);border-color:#edcb7e}
-.buildingItem{display:flex;align-items:center;gap:10px}
-.buildingItem .symbol{font-size:27px}
-.buildingItem .info{flex:1}
-nav{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;position:sticky;bottom:0;background:#0d1a25;border-top:1px solid #526b7b;padding:6px;z-index:5}
-nav button{font-size:11px;padding:9px 1px}
-nav button.active{border-color:var(--gold);color:var(--gold)}
-#toast{display:none;position:fixed;bottom:76px;left:50%;transform:translateX(-50%);background:#101f2b;border:1px solid #8198a5;border-radius:8px;padding:11px 14px;z-index:20;width:max-content;max-width:90%;text-align:center}
-footer{text-align:center;color:#839aa8;padding:12px;font-size:10px}
-</style>
-<script type="importmap">
-{
-  "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+/*
+ * Whiteout Survival — Isometric Tile Ground
+ * Base de terreno para o projeto Three.js.
+ *
+ * Inspirado no método de grade isométrica do:
+ * https://github.com/trevorscottprice/wos-tile-mosaic
+ *
+ * Este arquivo gera terreno provisório.
+ * Para reproduzir o terreno original, substitua as cores
+ * pelas texturas extraídas dos arquivos do jogo.
+ */
+
+export function createTileGround(THREE, options = {}) {
+  const config = {
+    width: options.width ?? 62,
+    height: options.height ?? 62,
+    tileSize: options.tileSize ?? 1,
+    seed: options.seed ?? 2026,
+    ...options
+  };
+
+  const group = new THREE.Group();
+  group.name = "WhiteoutCityGround";
+
+  const random = (() => {
+    let seed = config.seed >>> 0;
+    return () => {
+      seed = (1664525 * seed + 1013904223) >>> 0;
+      return seed / 4294967296;
+    };
+  })();
+
+  const geometry = new THREE.PlaneGeometry(
+    config.tileSize,
+    config.tileSize
+  );
+
+  geometry.rotateX(-Math.PI / 2);
+
+  const materials = [
+    new THREE.MeshStandardMaterial({
+      color: 0xe8edf0,
+      roughness: 1
+    }),
+    new THREE.MeshStandardMaterial({
+      color: 0xd7e0e7,
+      roughness: 1
+    }),
+    new THREE.MeshStandardMaterial({
+      color: 0xc6d2dc,
+      roughness: 1
+    }),
+    new THREE.MeshStandardMaterial({
+      color: 0xf5f6f7,
+      roughness: 1
+    })
+  ];
+
+  const count = config.width * config.height;
+  const meshes = materials.map(material => {
+    const mesh = new THREE.InstancedMesh(
+      geometry,
+      material,
+      count
+    );
+
+    mesh.name = "SnowGroundTiles";
+    mesh.receiveShadow = true;
+    mesh.castShadow = false;
+    group.add(mesh);
+    return mesh;
+  });
+
+  const dummy = new THREE.Object3D();
+  const tile = config.tileSize;
+
+  let index = 0;
+
+  for (let z = 0; z < config.height; z++) {
+    for (let x = 0; x < config.width; x++) {
+      // Grade regular; a câmera pode aplicar a perspectiva
+      // isométrica ao conjunto inteiro.
+      dummy.position.set(
+        (x - (config.width - 1) / 2) * tile,
+        0,
+        (z - (config.height - 1) / 2) * tile
+      );
+
+      dummy.updateMatrix();
+
+      const variation = random();
+      const materialIndex =
+        variation < 0.55 ? 0 :
+        variation < 0.78 ? 1 :
+        variation < 0.92 ? 2 : 3;
+
+      const mesh = meshes[materialIndex];
+      mesh.setMatrixAt(index, dummy.matrix);
+      index++;
+    }
   }
-}
-</script>
-</head>
-<body>
-<div id="app">
-<header>
-  <div class="logo">❄ FROZEN KINGDOM · SURVIVAL</div>
-  <div class="resources">
-    <div class="resource">🪵 MADEIRA<b id="wood">10.000</b></div>
-    <div class="resource">🥩 COMIDA<b id="food">10.000</b></div>
-    <div class="resource">⛏️ FERRO<b id="iron">5.000</b></div>
-    <div class="resource">💎 GEMAS<b id="gems">500</b></div>
-  </div>
-</header>
 
-<div id="world">
-  <canvas id="view"></canvas>
-  <div id="cityLabel">🏔️ CIDADE NEVADA · <span id="furnaceLevel">FORNALHA 1</span></div>
-  <div id="hint">Arraste para girar a câmera · toque numa construção</div>
-  <div id="loadError">Não foi possível iniciar o motor 3D. Verifique sua conexão e recarregue a página.</div>
-</div>
-
-<div class="actions">
-  <button onclick="collectResources()">📦 Recolher</button>
-  <button onclick="upgradeFurnace()">🔥 Melhorar fornalha</button>
-  <button onclick="showScreen('heroesScreen')">🦸 Heróis</button>
-</div>
-
-<section id="cityScreen" class="screen active">
-  <div class="card">
-    <h3 id="selectedName">🔥 Fornalha central</h3>
-    <p class="small" id="selectedInfo">Selecione uma construção na cidade para ver detalhes.</p>
-    <button class="gold" id="selectedAction" onclick="upgradeSelected()">Melhorar construção</button>
-  </div>
-  <div class="card">
-    <h3>❄️ Sobrevivência</h3>
-    <p class="small">Desenvolva sua cidade, mantenha a fornalha e reúna recursos para construir.</p>
-    <p id="status" class="small">Sua cidade está pronta.</p>
-  </div>
-</section>
-
-<section id="heroesScreen" class="screen">
-  <h2>🦸 Heróis</h2>
-  <p class="small">Progresso individual. Nível máximo configurado: 80.</p>
-  <div id="heroList"></div>
-</section>
-
-<section id="buildScreen" class="screen">
-  <h2>🏗️ Construções</h2>
-  <div id="buildingList"></div>
-</section>
-
-<section id="bagScreen" class="screen">
-  <h2>🎒 Inventário</h2>
-  <div class="card">🪵 Madeira: <b id="woodInv"></b></div>
-  <div class="card">🥩 Comida: <b id="foodInv"></b></div>
-  <div class="card">⛏️ Ferro: <b id="ironInv"></b></div>
-  <div class="card">💎 Gemas: <b id="gemsInv"></b></div>
-  <button onclick="collectResources()">Recolher recursos</button>
-</section>
-
-<section id="settingsScreen" class="screen">
-  <h2>⚙️ Opções</h2>
-  <div class="card">
-    <p class="small">O progresso fica guardado neste navegador.</p>
-    <button onclick="resetGame()">Reiniciar progresso</button>
-  </div>
-  <div class="card">
-    <h3>Sobre esta versão</h3>
-    <p class="small">Motor 3D Three.js com cidade gerada proceduralmente. Os modelos, texturas, heróis, animações e regras proprietárias do jogo original ainda não estão integrados.</p>
-  </div>
-</section>
-
-<nav>
-  <button class="active" data-screen="cityScreen">🏔️<br>Cidade</button>
-  <button data-screen="heroesScreen">🦸<br>Heróis</button>
-  <button data-screen="buildScreen">🏗️<br>Construções</button>
-  <button data-screen="bagScreen">🎒<br>Inventário</button>
-  <button data-screen="settingsScreen">⚙️<br>Opções</button>
-</nav>
-<footer>Protótipo 3D independente · modelos originais ainda necessários</footer>
-</div>
-<div id="toast" role="status"></div>
-
-<script type="module">
-import * as THREE from "three";
-import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-
-const MAX_LEVEL=80;
-const INITIAL={
-  wood:10000,food:10000,iron:5000,gems:500,furnace:1,
-  heroes:[
-    {id:"h1",name:"Alba",level:1,icon:"❄️",power:120,color:"#85cde5"},
-    {id:"h2",name:"Boris",level:1,icon:"🛡️",power:130,color:"#c4a4df"},
-    {id:"h3",name:"Clara",level:1,icon:"🏹",power:115,color:"#e9a5b0"},
-    {id:"h4",name:"Diego",level:1,icon:"🔥",power:140,color:"#e8b66d"},
-    {id:"h5",name:"Elsa",level:1,icon:"✨",power:125,color:"#8cddd5"}
-  ],
-  buildings:[
-    {id:"furnace",name:"Fornalha central",icon:"🔥",level:1,x:0,z:0,cost:0},
-    {id:"house1",name:"Casa dos sobreviventes",icon:"🏠",level:1,x:-5,z:4,cost:500},
-    {id:"workshop",name:"Oficina",icon:"⚒️",level:1,x:5,z:4,cost:600},
-    {id:"hospital",name:"Enfermaria",icon:"🏥",level:1,x:-5,z:-4,cost:700},
-    {id:"barracks",name:"Quartel",icon:"🏰",level:1,x:5,z:-4,cost:800},
-    {id:"sawmill",name:"Serraria",icon:"🪵",level:1,x:-8,z:0,cost:450},
-    {id:"warehouse",name:"Armazém",icon:"📦",level:1,x:8,z:0,cost:650}
-  ]
-};
-let state;
-try{
- const raw=localStorage.getItem("frozenKingdom3D");
- state=raw?JSON.parse(raw):structuredClone(INITIAL);
- if(!Array.isArray(state.heroes)||!Array.isArray(state.buildings))throw Error("bad save");
- state.heroes.forEach((h,i)=>{
-  h.id=INITIAL.heroes[i]?.id||h.id;
-  h.level=Math.max(1,Math.min(MAX_LEVEL,Math.floor(Number(h.level)||1)));
- });
-}catch(e){state=structuredClone(INITIAL)}
-let selectedId="furnace";
-function save(){try{localStorage.setItem("frozenKingdom3D",JSON.stringify(state))}catch(e){}}
-function fmt(n){return Math.floor(n).toLocaleString("pt-BR")}
-function toast(s){
- const el=document.getElementById("toast");
- el.textContent=s;el.style.display="block";
- clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.style.display="none",2300);
-}
-function renderResources(){
- ["wood","food","iron","gems"].forEach(k=>{
-  document.getElementById(k).textContent=fmt(state[k]);
-  document.getElementById(k+"Inv").textContent=fmt(state[k]);
- });
- document.getElementById("furnaceLevel").textContent="FORNALHA "+state.furnace;
-}
-function showScreen(id){
- document.querySelectorAll(".screen").forEach(x=>x.classList.toggle("active",x.id===id));
- document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("active",x.dataset.screen===id));
- if(id==="heroesScreen")renderHeroes();
- if(id==="buildScreen")renderBuildings();
-}
-document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>showScreen(b.dataset.screen)));
-
-function renderHeroes(){
- const root=document.getElementById("heroList");root.innerHTML="";
- state.heroes.forEach(hero=>{
-  const card=document.createElement("article");card.className="hero";
-  const portrait=document.createElement("div");portrait.className="portrait";
-  portrait.style.background=`linear-gradient(145deg,${hero.color},#253d4c)`;
-  portrait.textContent=hero.icon;
-  const info=document.createElement("div");
-  const name=document.createElement("div");name.className="heroName";name.textContent=hero.name;
-  const row=document.createElement("div");row.className="row";
-  const level=document.createElement("span");level.textContent=`Nível ${hero.level}`;
-  const max=document.createElement("span");max.textContent=hero.level>=MAX_LEVEL?"MÁXIMO":"Máximo 80";
-  row.append(level,max);
-  const bar=document.createElement("div");bar.className="bar";
-  const fill=document.createElement("span");fill.style.width=(hero.level/MAX_LEVEL*100)+"%";bar.append(fill);
-  const power=document.createElement("p");power.className="small";power.textContent="Poder: "+fmt(hero.power*hero.level);
-  const actions=document.createElement("div");actions.className="heroActions";
-  const up=document.createElement("button");up.className="gold";
-  up.disabled=hero.level>=MAX_LEVEL;up.textContent=hero.level>=MAX_LEVEL?"NÍVEL MÁXIMO 80":"⬆ Melhorar";
-  up.addEventListener("click",()=>upgradeHero(hero.id));
-  const detail=document.createElement("button");detail.textContent="Detalhes";
-  detail.addEventListener("click",()=>toast(`${hero.name}: nível ${hero.level}/80 · poder ${fmt(hero.power*hero.level)}`));
-  actions.append(up,detail);info.append(name,row,bar,power,actions);card.append(portrait,info);root.append(card);
- });
-}
-function upgradeHero(id){
- const hero=state.heroes.find(h=>h.id===id);if(!hero)return;
- if(hero.level>=MAX_LEVEL){hero.level=MAX_LEVEL;save();renderHeroes();toast("Nível máximo: 80.");return}
- hero.level=Math.min(MAX_LEVEL,hero.level+1);
- save();renderHeroes();toast(`${hero.name} evoluiu para o nível ${hero.level}.`);
-}
-function collectResources(){
- state.wood+=500;state.food+=500;state.iron+=200;save();renderResources();toast("Recursos recolhidos!");
-}
-function upgradeFurnace(){
- const b=state.buildings.find(x=>x.id==="furnace");
- const wc=state.furnace*1000,ic=state.furnace*500;
- if(state.wood<wc||state.iron<ic){toast(`Precisa de ${fmt(wc)} madeira e ${fmt(ic)} ferro.`);return}
- state.wood-=wc;state.iron-=ic;state.furnace++;b.level=state.furnace;
- save();renderResources();renderBuildings();updateSelection();rebuildCity();toast("Fornalha melhorada!");
-}
-function renderBuildings(){
- const root=document.getElementById("buildingList");root.innerHTML="";
- state.buildings.forEach(b=>{
-  const card=document.createElement("div");card.className="card buildingItem";
-  const sym=document.createElement("div");sym.className="symbol";sym.textContent=b.icon;
-  const info=document.createElement("div");info.className="info";
-  const title=document.createElement("h3");title.textContent=b.name;
-  const desc=document.createElement("p");desc.className="small";desc.textContent=`Nível ${b.level} · custo ${fmt(b.level*500)} madeira`;
-  const button=document.createElement("button");button.textContent="Selecionar";
-  button.addEventListener("click",()=>{selectBuilding(b.id);showScreen("cityScreen")});
-  info.append(title,desc);card.append(sym,info,button);root.append(card);
- });
-}
-function selectBuilding(id){
- selectedId=id;updateSelection();if(cityReady)highlightSelection();
-}
-function updateSelection(){
- const b=state.buildings.find(x=>x.id===selectedId);if(!b)return;
- document.getElementById("selectedName").textContent=b.icon+" "+b.name+" · nível "+b.level;
- document.getElementById("selectedInfo").textContent=b.id==="furnace"?"Centro da cidade. Custo da próxima melhoria: "+fmt(state.furnace*1000)+" madeira e "+fmt(state.furnace*500)+" ferro.":"Construção selecionada. Próxima melhoria: "+fmt(b.level*500)+" madeira.";
- document.getElementById("selectedAction").textContent=b.id==="furnace"?"Melhorar fornalha":"Melhorar construção";
-}
-function upgradeSelected(){
- const b=state.buildings.find(x=>x.id===selectedId);if(!b)return;
- if(b.id==="furnace"){upgradeFurnace();return}
- const cost=b.level*500;
- if(state.wood<cost){toast("Madeira insuficiente: precisa de "+fmt(cost)+".");return}
- state.wood-=cost;b.level++;save();renderResources();renderBuildings();updateSelection();rebuildCity();toast(b.name+" melhorada!");
-}
-function resetGame(){
- if(!confirm("Apagar o progresso salvo neste navegador?"))return;
- state=structuredClone(INITIAL);save();renderResources();renderHeroes();renderBuildings();selectedId="furnace";updateSelection();rebuildCity();showScreen("cityScreen");toast("Progresso reiniciado.");
-}
-
-/* CIDADE 3D PROCEDURAL */
-let scene,camera,renderer,controls,raycaster,pointer,cityRoot,cityReady=false;
-const clickable=[];
-function mat(color,roughness=0.85){return new THREE.MeshStandardMaterial({color,roughness})}
-const snowMat=mat("#dce9e9"),iceMat=mat("#a9cbd5"),woodMat=mat("#76584a"),darkMat=mat("#354d5b"),roofMat=mat("#617f8d");
-function box(parent,w,h,d,material,x,y,z){
- const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);
- m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;
-}
-function addBuilding(b){
- const group=new THREE.Group();group.position.set(b.x,0,b.z);group.userData.buildingId=b.id;
- const isF=b.id==="furnace",w=isF?2.7:1.8,h=isF?3.0:1.65,d=isF?2.6:1.8;
- box(group,w,h,d,mat(isF?"#9aaeb6":"#d1d9d8"),0,h/2,0);
- box(group,w+0.28,.18,d+0.28,roofMat,0,h+.05,0);
- const roof=new THREE.Mesh(new THREE.ConeGeometry(isF?2.0:1.45,.95,4),mat(isF?"#647d89":"#7e9aa5"));
- roof.position.set(0,h+.48,0);roof.rotation.y=Math.PI/4;roof.castShadow=true;group.add(roof);
- box(group,.62,isF?1.4:.8,.13,d/2+.08,d*0.03,isF?.72:.42,0,d/2+.04);
- box(group,.25,.3,.09,iceMat,-w*.25,h*.55,d/2+.06);
- if(isF){
-  box(group,.62,.9,.62,darkMat,0,1.0,d/2+.15);
-  const fire=new THREE.Mesh(new THREE.SphereGeometry(.28,12,10),new THREE.MeshStandardMaterial({color:"#ff9e35",emissive:"#e44c10",emissiveIntensity:1.5}));
-  fire.position.set(0,1.12,d/2+.5);group.add(fire);
-  group.userData.fire=fire;
- }else{
-  box(group,.32,.55,.12,woodMat,0,.32,d/2+.08);
- }
- const outline=new THREE.Mesh(new THREE.BoxGeometry(w+.38,h+1.5,d+.38),new THREE.MeshBasicMaterial({color:"#ffd87d",wireframe:true,transparent:true,opacity:.65}));
- outline.visible=false;group.add(outline);group.userData.outline=outline;
- const labelCanvas=document.createElement("canvas");labelCanvas.width=512;labelCanvas.height=80;
- const c=labelCanvas.getContext("2d");c.fillStyle="#142a38";c.fillRect(0,0,512,80);
- c.fillStyle="#fff";c.font="bold 30px Arial";c.textAlign="center";c.fillText(b.name,256,34);
- c.fillStyle="#ffdb86";c.font="24px Arial";c.fillText("Nível "+b.level,256,64);
- const tex=new THREE.CanvasTexture(labelCanvas);
- const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthTest:false}));
- sprite.scale.set(3.8,.6,1);sprite.position.set(0,h+1.6,0);group.add(sprite);group.userData.label=sprite;
- cityRoot.add(group);clickable.push(group);return group;
-}
-function buildTree(x,z,s){
- const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.09*s,.15*s,.6*s,6),woodMat);
- trunk.position.set(x,.3*s,z);trunk.castShadow=true;cityRoot.add(trunk);
- for(let i=0;i<3;i++){
-  const cone=new THREE.Mesh(new THREE.ConeGeometry(.55*s*(1-i*.13),1.0*s,7),mat(i===1?"#527f85":"#729ba0"));
-  cone.position.set(x,.65*s+i*.48*s,z);cone.castShadow=true;cityRoot.add(cone);
-  const cap=new THREE.Mesh(new THREE.ConeGeometry(.4*s*(1-i*.1),.25*s,7),snowMat);
-  cap.position.set(x,.98*s+i*.48*s,z);cityRoot.add(cap);
- }
-}
-function buildRoad(){
- const road= new THREE.Mesh(new THREE.PlaneGeometry(5,23),mat("#8fa9b1"));
- road.rotation.x=-Math.PI/2;road.position.set(0,.025,5);cityRoot.add(road);
- for(let i=-5;i<17;i+=2){
-  box(cityRoot,.06,.025,.8,snowMat,0,.05,i+5);
- }
-}
-function init3D(){
- const canvas=document.getElementById("view");
- scene=new THREE.Scene();scene.background=new THREE.Color("#b9d7e2");scene.fog=new THREE.Fog("#c8dfe5",22,52);
- camera=new THREE.PerspectiveCamera(43,1,.1,120);camera.position.set(14,17,20);
- renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});
- renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.75));
- renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
- renderer.outputColorSpace=THREE.SRGBColorSpace;
- scene.add(new THREE.HemisphereLight("#effaff","#667c86",2.1));
- const sun=new THREE.DirectionalLight("#fff0d7",3);sun.position.set(-10,18,9);sun.castShadow=true;
- sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-18;sun.shadow.camera.right=18;sun.shadow.camera.top=18;sun.shadow.camera.bottom=-18;scene.add(sun);
- cityRoot=new THREE.Group();scene.add(cityRoot);
- const ground=new THREE.Mesh(new THREE.PlaneGeometry(38,38),snowMat);ground.rotation.x=-Math.PI/2;ground.position.y=-.04;ground.receiveShadow=true;cityRoot.add(ground);
- buildRoad();
- for(let i=0;i<36;i++){
-  const angle=i*2.399,rad=10+(i%5)*1.15;
-  buildTree(Math.cos(angle)*rad,Math.sin(angle)*rad,.65+(i%4)*.12);
- }
- const mountainMat=mat("#e7f0f0");
- for(let i=0;i<9;i++){
-  const cone=new THREE.Mesh(new THREE.ConeGeometry(3.2+(i%3),5+(i%4)*1.2,5),i%2?snowMat:iceMat);
-  cone.position.set(-20+i*5,2,-18-(i%3)*2);cone.rotation.y=i*.4;scene.add(cone);
- }
- rebuildCity();
- controls=new OrbitControls(camera,renderer.domElement);
- controls.target.set(0,1,0);controls.enableDamping=true;controls.dampingFactor=.06;
- controls.minDistance=9;controls.maxDistance=36;controls.maxPolarAngle=Math.PI*.47;controls.minPolarAngle=.2;
- raycaster=new THREE.Raycaster();pointer=new THREE.Vector2();
- renderer.domElement.addEventListener("pointerup",onCityTap);
- window.addEventListener("resize",resize3D);
- resize3D();cityReady=true;animate();
-}
-function rebuildCity(){
- if(!cityRoot)return;
- const old=cityRoot.children.filter(o=>o.userData.buildingId);
- old.forEach(o=>{cityRoot.remove(o);const i=clickable.indexOf(o);if(i>=0)clickable.splice(i,1)});
- state.buildings.forEach(b=>addBuilding(b));
- highlightSelection();
-}
-function highlightSelection(){
- clickable.forEach(o=>{
-  const selected=o.userData.buildingId===selectedId;
-  o.userData.outline.visible=selected;
-  const b=state.buildings.find(x=>x.id===o.userData.buildingId);
-  if(b&&o.userData.label){
-   const canvas=o.userData.label.material.map.image;
-   const c=canvas.getContext("2d");c.clearRect(0,0,512,80);c.fillStyle=selected?"#6c4e20":"#142a38";c.fillRect(0,0,512,80);
-   c.fillStyle="#fff";c.font="bold 30px Arial";c.textAlign="center";c.fillText(b.name,256,34);
-   c.fillStyle="#ffdb86";c.font="24px Arial";c.fillText("Nível "+b.level,256,64);o.userData.label.material.map.needsUpdate=true;
+  for (const mesh of meshes) {
+    mesh.instanceMatrix.needsUpdate = true;
   }
- });
-}
-function onCityTap(event){
- const rect=renderer.domElement.getBoundingClientRect();
- pointer.x=((event.clientX-rect.left)/rect.width)*2-1;
- pointer.y=-((event.clientY-rect.top)/rect.height)*2+1;
- raycaster.setFromCamera(pointer,camera);
- const hits=raycaster.intersectObjects(clickable,true);
- if(!hits.length)return;
- let obj=hits[0].object;while(obj&&!obj.userData.buildingId)obj=obj.parent;
- if(obj&&obj.userData.buildingId){selectedId=obj.userData.buildingId;updateSelection();highlightSelection();}
-}
-function resize3D(){
- if(!renderer||!camera)return;
- const el=document.getElementById("world"),w=el.clientWidth,h=el.clientHeight;
- renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();
-}
-function animate(){
- requestAnimationFrame(animate);
- if(!renderer)return;
- const t=performance.now()*.001;
- clickable.forEach(o=>{if(o.userData.fire)o.userData.fire.scale.setScalar(.88+Math.sin(t*8)*.12)});
- controls?.update();renderer.render(scene,camera);
-}
-try{init3D()}catch(error){
- console.error(error);document.getElementById("loadError").style.display="block";
-}
-renderResources();renderHeroes();renderBuildings();updateSelection();
 
-function renderResources(){
- ["wood","food","iron","gems"].forEach(k=>{
-  const top=document.getElementById(k);if(top)top.textContent=fmt(state[k]);
-  const inv=document.getElementById(k+"Inv");if(inv)inv.textContent=fmt(state[k]);
- });
- document.getElementById("furnaceLevel").textContent="FORNALHA "+state.furnace;
+  group.userData.grid = {
+    width: config.width,
+    height: config.height,
+    tileSize: tile,
+    seed: config.seed
+  };
+
+  return group;
 }
-function renderHeroes(){
- const root=document.getElementById("heroList");root.innerHTML="";
- state.heroes.forEach(hero=>{
-  const card=document.createElement("article");card.className="hero";
-  const portrait=document.createElement("div");portrait.className="portrait";portrait.textContent=hero.icon;
-  portrait.style.background=`linear-gradient(145deg,${hero.color},#263e4d)`;
-  const info=document.createElement("div");
-  const name=document.createElement("div");name.className="heroName";name.textContent=hero.name;
-  const row=document.createElement("div");row.className="row";
-  const level=document.createElement("span");level.textContent="Nível "+hero.level;
-  const max=document.createElement("span");max.textContent=hero.level>=MAX_LEVEL?"MÁXIMO":"Máximo 80";
-  row.append(level,max);
-  const bar=document.createElement("div");bar.className="bar";
-  const fill=document.createElement("span");fill.style.width=(hero.level/MAX_LEVEL*100)+"%";bar.append(fill);
-  const power=document.createElement("p");power.className="small";power.textContent="Poder: "+fmt(hero.power*hero.level);
-  const actions=document.createElement("div");actions.className="heroActions";
-  const up=document.createElement("button");up.className="gold";up.disabled=hero.level>=MAX_LEVEL;
-  up.textContent=hero.level>=MAX_LEVEL?"NÍVEL MÁXIMO 80":"⬆ Melhorar";
-  up.addEventListener("click",()=>upgradeHero(hero.id));
-  const detail=document.createElement("button");detail.textContent="Detalhes";
-  detail.addEventListener("click",()=>toast(`${hero.name}: nível ${hero.level}/80 · poder ${fmt(hero.power*hero.level)}`));
-  actions.append(up,detail);info.append(name,row,bar,power,actions);card.append(portrait,info);root.append(card);
- });
-}
-function upgradeHero(id){
- const h=state.heroes.find(x=>x.id===id);if(!h)return;
- if(h.level>=MAX_LEVEL){h.level=MAX_LEVEL;toast("Nível máximo 80.");}
- else{h.level=Math.min(MAX_LEVEL,h.level+1);toast(h.name+" evoluiu para o nível "+h.level+".");}
- save();renderHeroes();
-}
-function collectResources(){state.wood+=500;state.food+=500;state.iron+=200;save();renderResources();toast("Recursos recolhidos!");}
-function upgradeFurnace(){
- const b=state.buildings.find(x=>x.id==="furnace"),wc=state.furnace*1000,ic=state.furnace*500;
- if(state.wood<wc||state.iron<ic){toast("Recursos insuficientes: "+fmt(wc)+" madeira e "+fmt(ic)+" ferro.");return;}
- state.wood-=wc;state.iron-=ic;state.furnace++;b.level=state.furnace;
- save();renderResources();renderBuildings();updateSelection();rebuildCity();toast("Fornalha melhorada para o nível "+state.furnace+".");
-}
-function upgradeSelected(){
- const b=state.buildings.find(x=>x.id===selectedId);if(!b)return;
- if(b.id==="furnace"){upgradeFurnace();return;}
- const cost=b.level*500;if(state.wood<cost){toast("Madeira insuficiente: "+fmt(cost)+".");return;}
- state.wood-=cost;b.level++;save();renderResources();renderBuildings();updateSelection();rebuildCity();toast(b.name+" melhorada!");
-}
-function renderBuildings(){
- const root=document.getElementById("buildingList");root.innerHTML="";
- state.buildings.forEach(b=>{
-  const card=document.createElement("div");card.className="card buildingItem";
-  const symbol=document.createElement("div");symbol.className="symbol";symbol.textContent=b.icon;
-  const info=document.createElement("div");info.className="info";
-  const name=document.createElement("h3");name.textContent=b.name;
-  const desc=document.createElement("p");desc.className="small";desc.textContent="Nível "+b.level+" · próxima melhoria: "+fmt(b.level*500)+" madeira";
-  const select=document.createElement("button");select.textContent="Ver";
-  select.addEventListener("click",()=>{selectedId=b.id;updateSelection();highlightSelection();showScreen("cityScreen");});
-  info.append(name,desc);card.append(symbol,info,select);root.append(card);
- });
-}
-function resetGame(){
- if(!confirm("Apagar o progresso salvo?"))return;
- state=structuredClone(INITIAL);save();renderResources();renderHeroes();renderBuildings();selectedId="furnace";updateSelection();rebuildCity();showScreen("cityScreen");toast("Progresso reiniciado.");
-}
-</script>
-</body>
-</html>
