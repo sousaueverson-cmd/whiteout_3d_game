@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt">
 <head>
@@ -7,337 +6,175 @@
 <title>Whiteout Survival 3D</title>
 <style>
 *{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:Arial;background:#80a8e8;color:white}
-button{color:white;background:linear-gradient(#496b90,#203a5a);border:1px solid #7895b4;border-radius:12px;padding:10px;font-weight:bold;cursor:pointer;touch-action:manipulation}
-#game{position:fixed;inset:0}
-canvas{width:100%;height:100%;display:block;touch-action:none}
-#top{position:absolute;z-index:2;top:0;left:0;right:0;background:linear-gradient(#142b48f5,#294a70dd);padding:8px 5px 12px;border-bottom:2px solid #829ebd}
-#stats{display:flex;align-items:center;justify-content:space-around;gap:4px}
-#avatar{font-size:28px;background:#d7e9f8;border:3px solid #a5c4df;border-radius:12px;padding:5px}
-.stat{text-align:center;font-size:11px;white-space:nowrap}
-.stat b{display:block;font-size:14px;margin-top:4px}
-#plus{font-size:26px;color:#51ff79;background:none;border:0;padding:0}
-#temp{font-size:19px;font-weight:bold;margin-top:6px}
-#vip{position:absolute;top:67px;left:43%;background:#d4ad37;padding:6px 12px;border-radius:8px}
-#quick{position:absolute;z-index:2;right:7px;top:145px;width:174px;display:grid;grid-template-columns:1fr 1fr;gap:7px}
-.quick{height:79px;font-size:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
-.quick span{font-size:27px}
-#left{position:absolute;z-index:2;left:-5px;top:46%;font-size:25px;height:65px}
-#right{position:absolute;z-index:2;right:8px;bottom:112px;display:grid;gap:9px}
-.side{height:58px;width:58px;font-size:24px}
-#mission{position:absolute;z-index:2;left:10px;bottom:91px;max-width:75%;background:#1c3857ed;border:1px solid #718eaa;border-radius:24px;padding:12px;font-size:12px}
-#bottom{position:absolute;z-index:3;bottom:0;left:0;right:0;height:79px;display:flex;justify-content:space-around;background:linear-gradient(#315981,#122b4c);border-top:3px solid #7999b8}
-.nav{flex:1;padding:4px 0;border:0;border-radius:0;background:transparent;box-shadow:none;font-size:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
-.nav span{font-size:25px}
-#panel{display:none;position:absolute;z-index:8;top:17%;bottom:17%;left:6%;width:88%;overflow:auto;padding:16px;background:linear-gradient(#284d71,#11263e);border:2px solid #9ab8d3;border-radius:16px;box-shadow:0 8px 25px #0009}
-#panel h2{font-size:21px;margin:0 0 15px}
-#close{float:right;font-size:20px}
-.item{padding:12px;margin:8px 0;border:1px solid #6687a7;border-radius:9px;background:#ffffff10}
-.action{width:100%;margin:5px 0;text-align:left}
-#toast{display:none;position:absolute;z-index:12;top:43%;left:10%;width:80%;text-align:center;padding:15px;background:#152e48;border:2px solid #8eb5d7;border-radius:12px}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:Arial,sans-serif;color:white;background:#83a9e9}
+button{color:white;border:1px solid #7899bf;border-radius:12px;background:linear-gradient(#466b94,#203b60);padding:9px 5px;font-size:13px;cursor:pointer}
+#top{height:120px;background:linear-gradient(#152b48,#294e7a);padding:8px;position:absolute;top:0;left:0;right:0;z-index:3}
+#stats{display:grid;grid-template-columns:55px repeat(4,1fr) 25px;gap:3px;align-items:center;text-align:center;font-size:11px}
+#avatar{height:52px;font-size:27px}
+.stat b{display:block;font-size:15px;margin-top:5px}
+#weather{margin-top:9px;font-weight:bold;font-size:20px}
+#vip{position:absolute;left:43%;bottom:6px;background:#d5ad35;padding:5px 12px;border-radius:8px}
+#scene{position:absolute;inset:120px 0 90px;overflow:hidden;background:linear-gradient(#7fa5e8,#a9c9f0)}
+#snow{position:absolute;inset:0;background-image:radial-gradient(white 1px,transparent 2px);background-size:45px 53px}
+#city{position:absolute;inset:0;transform-origin:center;transition:transform .15s}
+.tile{position:absolute;width:160px;height:100px;background:#cadcf0;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)}
+.building{position:absolute;width:85px;height:65px;transform:translate(-50%,-50%);filter:drop-shadow(4px 6px 2px #263a5055)}
+.base{position:absolute;bottom:0;width:100%;height:48px;background:#263c51;border:3px solid #5d748d;clip-path:polygon(0 15%,50% 0,100% 15%,100% 85%,50% 100%,0 85%)}
+.roof{position:absolute;top:0;left:-5px;width:95px;height:34px;background:#f0f5fb;border:2px solid #9bb3d0;clip-path:polygon(50% 0,100% 48%,50% 100%,0 48%)}
+.door{position:absolute;bottom:6px;left:40px;width:14px;height:24px;background:#72503a}
+.window{position:absolute;bottom:17px;left:10px;width:12px;height:12px;background:#f1ce70}
+.furnace{width:145px;height:125px}
+.furnace .base{height:83px;background:#1c3045;border:5px solid #627b93}
+.furnace .roof{width:155px;height:61px;background:#f5f8fd}
+.furnace .door{left:65px;width:23px;height:39px}
+.furnace .window{display:none}
+#quick{position:absolute;right:7px;top:15px;display:grid;grid-template-columns:repeat(2,82px);gap:7px}
+.quick{height:82px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;background:linear-gradient(#456b94ee,#1b3459ee);border-radius:18px}
+.quick span{font-size:27px;margin-bottom:3px}
+#leftarrow{position:absolute;left:-7px;top:45%;height:75px;width:70px;font-size:25px}
+#rightactions{position:absolute;right:8px;bottom:10px;display:flex;flex-direction:column;gap:8px}
+.round{height:60px;width:65px;font-size:27px;border-radius:20px}
+#mission{position:absolute;bottom:10px;left:10px;background:#193456ed;padding:12px;border-radius:25px;font-size:12px;max-width:calc(100% - 90px)}
+#bottom{position:absolute;bottom:0;left:0;right:0;height:90px;display:grid;grid-template-columns:repeat(6,1fr);background:linear-gradient(#285184,#142d4d);border-top:3px solid #7195be;z-index:3}
+.nav{border:0;background:transparent;box-shadow:none;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;font-size:11px;padding:2px}
+.nav span{font-size:26px}
+.nav.active{background:#456a92}
+#screen{display:none;position:absolute;z-index:5;top:120px;bottom:90px;left:0;right:0;overflow:auto;background:linear-gradient(#294b72,#142b48);padding:15px}
+#screen.show{display:block}
+#heading{display:flex;justify-content:space-between;align-items:center;font-size:22px;font-weight:bold;margin-bottom:12px}
+.card{background:#2b4c72;border:1px solid #7897bb;border-radius:13px;padding:13px;margin:9px 0}
+.card h3{margin:0 0 9px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.action{width:100%;margin-top:8px;background:linear-gradient(#4785a7,#24617e)}
+.gold{background:linear-gradient(#e4c34c,#a87818)}
+.muted{font-size:12px;color:#d0dff1}
+#toast{display:none;position:absolute;z-index:10;left:50%;bottom:105px;transform:translateX(-50%);background:#132943;padding:12px;border-radius:14px;text-align:center;max-width:90%;font-size:13px}
+#toast.show{display:block}
 </style>
 </head>
 <body>
-<div id="game"></div>
+<header id="top">
+<div id="stats">
+<button id="avatar" data-a="profile">👨🏻</button>
+<div class="stat">♟ 1,349,894</div>
+<div class="stat">⏱<b id="timer">00:49</b></div>
+<div class="stat">🧍<b>32/32</b></div>
+<div class="stat">🪵<b id="woodtop">835.9K</b></div>
+<div class="stat">💎<b>13,735</b></div>
+<button data-a="resources" style="font-size:23px;background:none;border:0">+</button>
+</div>
+<div id="weather">🌡 −28.0°C</div>
+<div id="vip">🟡 VIP 2</div>
+</header>
 
-<div id="top">
- <div id="stats">
-  <div id="avatar">🧑🏻</div>
-  <div class="stat">♟ PODER<b>1.349.894</b></div>
-  <div class="stat">⏱️<b id="timer">00:49</b></div>
-  <div class="stat">🪵<b id="wood">835.9K</b></div>
-  <div class="stat">💎<b id="gems">13,735</b></div>
-  <button id="plus" onclick="openPanel('Recursos')">＋</button>
- </div>
- <div id="temp">🌡 −28.0°C</div>
- <div id="vip">🟡 VIP 2</div>
+<main id="scene">
+<div id="snow"></div>
+<div id="city">
+<div class="tile" style="left:0;top:20%"></div>
+<div class="tile" style="left:35%;top:12%"></div>
+<div class="tile" style="left:58%;top:35%"></div>
+<div class="tile" style="left:12%;top:56%"></div>
+<div class="tile" style="left:42%;top:65%"></div>
+<div class="building" style="left:17%;top:30%"><div class="base"></div><div class="roof"></div><div class="door"></div><div class="window"></div></div>
+<div class="building" style="left:43%;top:24%"><div class="base"></div><div class="roof"></div><div class="door"></div><div class="window"></div></div>
+<div class="building" style="left:73%;top:34%"><div class="base"></div><div class="roof"></div><div class="door"></div><div class="window"></div></div>
+<div class="building furnace" style="left:50%;top:53%"><div class="base"></div><div class="roof"></div><div class="door"></div></div>
+<div class="building" style="left:26%;top:75%"><div class="base"></div><div class="roof"></div><div class="door"></div><div class="window"></div></div>
+<div class="building" style="left:76%;top:73%"><div class="base"></div><div class="roof"></div><div class="door"></div><div class="window"></div></div>
+<div class="building" style="left:49%;top:84%"><div class="base"></div><div class="roof"></div><div class="door"></div><div class="window"></div></div>
 </div>
 
 <div id="quick">
- <button class="quick" onclick="openPanel('Eventos')"><span>⚔️</span>Eventos</button>
- <button class="quick" onclick="openPanel('Missões')"><span>📋</span>Missões</button>
- <button class="quick" onclick="openPanel('Pesquisa')"><span>🧭</span>Pesquisa</button>
- <button class="quick" onclick="openPanel('Ofertas')"><span>🎁</span>Ofertas</button>
- <button class="quick" onclick="openPanel('Compra inicial')"><span>🧑‍🚀</span>Compra inicial</button>
- <button class="quick" onclick="openPanel('7 dias')"><span>🧊</span>7 dias</button>
+<button class="quick" data-a="events"><span>⚔️</span>Eventos</button>
+<button class="quick" data-a="tasks"><span>📋</span>Eventos</button>
+<button class="quick" data-a="research"><span>🧭</span>Pesquisa</button>
+<button class="quick" data-a="offers"><span>🎁</span>Ofertas</button>
+<button class="quick" data-a="starter"><span>🧑🏻‍🚀</span>Compra inicial</button>
+<button class="quick" data-a="seven"><span>🧊</span>7 dias</button>
 </div>
-
-<button id="left" onclick="openPanel('Atalhos')">➤</button>
-<div id="right">
- <button class="side" onclick="openPanel('Classificação')">⚖️</button>
- <button class="side" onclick="openPanel('Mensagens')">✉️</button>
+<button id="leftarrow" data-a="shortcuts">➤</button>
+<div id="rightactions">
+<button class="round" data-a="ranking">⚖</button>
+<button class="round" data-a="mail">✉</button>
 </div>
+<div id="mission">📜 Limpar estágio de exploração 150 (0 / 1)</div>
+</main>
 
-<div id="mission" onclick="openPanel('Missões')">📜 Construir a cidade (0/1)</div>
+<section id="screen">
+<div id="heading"><span id="title">Heróis</span><button data-a="close">✕</button></div>
+<div id="content"></div>
+</section>
 
-<div id="bottom">
- <button class="nav" onclick="openPanel('Exploração')"><span>⚔️</span>Exploração</button>
- <button class="nav" onclick="openPanel('Heróis')"><span>🦸</span>Heróis</button>
- <button class="nav" onclick="openPanel('Mochila')"><span>🎒</span>Mochila</button>
- <button class="nav" onclick="openPanel('Loja')"><span>🏪</span>Loja</button>
- <button class="nav" onclick="openPanel('Aliança')"><span>🛡️</span>Aliança</button>
- <button class="nav" onclick="openPanel('Mundo')"><span>🗺️</span>Mundo</button>
-</div>
-
-<div id="panel">
- <button id="close" onclick="closePanel()">✕</button>
- <h2 id="ptitle">Cidade</h2>
- <div id="content"></div>
-</div>
+<nav id="bottom">
+<button class="nav" data-a="exploration"><span>⚔️</span>Exploração</button>
+<button class="nav" data-a="heroes"><span>🦸</span>Heróis</button>
+<button class="nav" data-a="backpack"><span>🎒</span>Mochila</button>
+<button class="nav" data-a="shop"><span>🏪</span>Loja</button>
+<button class="nav" data-a="alliance"><span>🛡️</span>Aliança</button>
+<button class="nav" data-a="world"><span>🗺️</span>Mundo</button>
+</nav>
 <div id="toast"></div>
 
 <script>
-const state={wood:835900,food:3000000,gems:13735,houses:0,furnace:1};
+(()=>{
+let wood=835900,food=320000,heroLevel=1,furnace=1,stage=150,items=3;
 const $=id=>document.getElementById(id);
-let toastTimer;
-
-function notify(s){
- $("toast").textContent=s;
- $("toast").style.display="block";
- clearTimeout(toastTimer);
- toastTimer=setTimeout(()=>$("toast").style.display="none",2200);
-}
-function update(){
- $("wood").textContent=state.wood>=1000000?(state.wood/1000000).toFixed(2)+"M":(state.wood/1000).toFixed(1)+"K";
- $("gems").textContent=state.gems.toLocaleString("en-US");
-}
-function openPanel(name){
- $("ptitle").textContent=name;
- $("panel").style.display="block";
- const c=$("content");
- const button=(label,action)=>'<button class="action" onclick="'+action+'">'+label+'</button>';
- const item=text=>'<div class="item">'+text+'</div>';
- if(name==="Construir"){
-  c.innerHTML=item("🏠 Casa — custa 100 madeira")+button("Construir casa","buildHouse()")+item("🔥 Fornalha — nível "+state.furnace)+button("Melhorar fornalha — 500 madeira","upgradeFurnace()");
- }else if(name==="Recursos"){
-  c.innerHTML=item("🪵 Madeira: "+state.wood.toLocaleString())+item("🥩 Comida: "+state.food.toLocaleString())+item("💎 Diamantes: "+state.gems.toLocaleString())+button("Recolher recursos","collectResources()");
- }else if(name==="Heróis"){
-  c.innerHTML=item("🦸 Herói de exploração — nível 1")+item("🛡️ Herói de defesa — nível 1")+button("Treinar herói — 200 madeira","trainHero()");
- }else if(name==="Mochila"){
-  c.innerHTML=item("🎒 Mochila de recursos")+item("🪵 Madeira: "+state.wood.toLocaleString())+item("🥩 Comida: "+state.food.toLocaleString());
- }else if(name==="Loja"||name==="Ofertas"||name==="Compra inicial"||name==="7 dias"){
-  c.innerHTML=item("🎁 Pacote gratuito de recursos")+button("Recolher pacote grátis","freePack()");
- }else if(name==="Pesquisa"){
-  c.innerHTML=item("🔬 Economia — nível 1")+item("⚔️ Combate — nível 1")+button("Pesquisar — 150 madeira","research()");
- }else if(name==="Aliança"){
-  c.innerHTML=item("🛡️ Alianças — modo individual")+button("Ver informações","notify('O sistema online de alianças ainda não foi implementado.')");
- }else if(name==="Exploração"){
-  c.innerHTML=item("⚔️ Estágio de exploração 150")+button("Iniciar exploração","explore()");
- }else if(name==="Mundo"){
-  c.innerHTML=item("🗺️ Mapa da região")+button("Centralizar cidade","centerCity()");
- }else if(name==="Missões"||name==="Eventos"){
-  c.innerHTML=item("📋 Missão: construa uma casa")+button("Recolher recompensa","missionReward()");
- }else if(name==="Mensagens"){
-  c.innerHTML=item("✉️ Nenhuma mensagem nova.");
- }else if(name==="Classificação"){
-  c.innerHTML=item("🏆 Poder da cidade: 1.349.894")+item("Sua classificação local: 1");
- }else if(name==="Atalhos"){
-  c.innerHTML=button("🏠 Construir casa","buildHouse()")+button("🪵 Recolher recursos","collectResources()")+button("🏙️ Centralizar cidade","centerCity()");
- }else{
-  c.innerHTML=item(name)+item("Área de jogo preparada para novas funções.");
- }
-}
-function closePanel(){$("panel").style.display="none"}
-function buildHouse(){
- if(state.wood<100){notify("Madeira insuficiente!");return}
- state.wood-=100;state.houses++;update();
- if(window.addCityHouse)window.addCityHouse();
- $("mission").textContent="📜 Construir a cidade ("+Math.min(state.houses,1)+"/1)";
- notify("Casa construída!");
- openPanel("Construir");
-}
-function upgradeFurnace(){
- if(state.wood<500){notify("Precisa de 500 madeiras!");return}
- state.wood-=500;state.furnace++;update();
- notify("Fornalha melhorada para nível "+state.furnace);
- openPanel("Construir");
-}
-function collectResources(){
- state.wood+=250;state.food+=500;update();
- notify("+250 madeira e +500 comida");
- openPanel("Recursos");
-}
-function freePack(){
- state.wood+=100;state.food+=500;update();
- notify("Pacote gratuito recolhido!");
- openPanel("Loja");
-}
-function trainHero(){
- if(state.wood<200){notify("Madeira insuficiente!");return}
- state.wood-=200;update();notify("Herói treinado!");
-}
-function research(){
- if(state.wood<150){notify("Madeira insuficiente!");return}
- state.wood-=150;update();notify("Pesquisa concluída!");
-}
-function explore(){notify("Exploração iniciada!")}
-function missionReward(){
- state.wood+=100;state.food+=250;update();
- notify("Recompensa recolhida!");
-}
-function centerCity(){
- closePanel();
- if(window.centerCamera)window.centerCamera();
- notify("Cidade centralizada");
-}
-let seconds=49;
-setInterval(()=>{
- seconds=seconds<=0?59:seconds-1;
- $("timer").textContent="00:"+String(seconds).padStart(2,"0");
-},1000);
-update();
-</script>
-
-<script type="module">
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
-
-const scene=new THREE.Scene();
-scene.background=new THREE.Color(0x80a8e8);
-scene.fog=new THREE.Fog(0x80a8e8,45,115);
-
-const camera=new THREE.PerspectiveCamera(43,innerWidth/innerHeight,.1,250);
-const renderer=new THREE.WebGLRenderer({antialias:true});
-renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
-renderer.setSize(innerWidth,innerHeight);
-renderer.shadowMap.enabled=true;
-renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-document.getElementById("game").prepend(renderer.domElement);
-
-scene.add(new THREE.HemisphereLight(0xe6f4ff,0x526779,2.2));
-const sun=new THREE.DirectionalLight(0xfff5e2,3);
-sun.position.set(-15,30,18);
-sun.castShadow=true;
-scene.add(sun);
-
-const ground=new THREE.Mesh(new THREE.PlaneGeometry(150,150),
- new THREE.MeshStandardMaterial({color:0xdceaf7,roughness:1}));
-ground.rotation.x=-Math.PI/2;
-ground.position.y=-.12;
-ground.receiveShadow=true;
-scene.add(ground);
-
-const city=new THREE.Group();
-scene.add(city);
-const mat=c=>new THREE.MeshStandardMaterial({color:c,roughness:.95});
-const wall=mat(0x526779),dark=mat(0x27394b),snow=mat(0xeaf4fb),
- roof=mat(0x354a61),wood=mat(0x614839),windowMat=mat(0x86d4eb),
- metal=mat(0x91a4b2),pine=mat(0x4a6b73);
-
-function box(parent,x,y,z,w,h,d,m){
- const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);
- o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;
- parent.add(o);return o;
-}
-function house(x,z,s=1){
- const g=new THREE.Group();g.position.set(x,0,z);g.scale.setScalar(s);city.add(g);
- box(g,0,.85,0,2.8,1.7,2.6,wall);
- box(g,0,1.72,0,2.9,.13,2.7,snow);
- const r=new THREE.Mesh(new THREE.ConeGeometry(2.15,1.4,4),roof);
- r.position.y=2.35;r.rotation.y=Math.PI/4;r.castShadow=true;g.add(r);
- box(g,0,3.06,0,2.4,.12,2.3,snow);
- box(g,0,.62,1.32,.52,1.18,.07,wood);
- box(g,-.8,1.1,1.33,.48,.45,.07,windowMat);
- box(g,.8,1.1,1.33,.48,.45,.07,windowMat);
- return g;
-}
-function tree(x,z,s=1){
- const g=new THREE.Group();g.position.set(x,0,z);g.scale.setScalar(s);city.add(g);
- box(g,0,.5,0,.2,1,.2,wood);
- for(let i=0;i<3;i++){
-  const c=new THREE.Mesh(new THREE.ConeGeometry(1-i*.19,2,7),pine);
-  c.position.y=1.25+i*.72;c.castShadow=true;g.add(c);
-  const cap=new THREE.Mesh(new THREE.ConeGeometry(.77-i*.16,.35,7),snow);
-  cap.position.y=1.75+i*.72;g.add(cap);
- }
-}
-function furnace(){
- const g=new THREE.Group();city.add(g);
- box(g,0,1,0,4.8,2,4.5,dark);
- box(g,0,2.05,0,4.5,.25,4.3,snow);
- box(g,0,2.7,0,3.8,1.05,3.6,wall);
- box(g,0,3.28,0,4,.16,3.9,snow);
- box(g,0,3.75,0,2.3,.8,2.2,metal);
- box(g,0,4.22,0,2.5,.14,2.4,snow);
- box(g,0,4.65,0,1.1,.8,1.1,dark);
- const light=new THREE.PointLight(0xff8530,5,12);
- light.position.set(0,5.4,0);g.add(light);
- const fire=new THREE.Mesh(new THREE.ConeGeometry(.35,.7,7),
- new THREE.MeshBasicMaterial({color:0xff9a32}));
- fire.position.y=5.4;g.add(fire);
-}
-furnace();
-
-const positions=[
- [-5,-5,1],[-9,-2,.9],[-5,5,1],[5,-5,.95],[9,-2,.9],
- [5,5,1],[-10,6,.9],[-1,9,.9],[9,7,.85],
- [-12,-7,.8],[12,-7,.85],[-8,10,.8],[2,-10,.9]
-];
-positions.forEach(p=>house(p[0],p[1],p[2]));
-for(let i=0;i<65;i++){
- const x=(Math.random()-.5)*55,z=(Math.random()-.5)*55;
- if(Math.abs(x)<10&&Math.abs(z)<11)continue;
- tree(x,z,.65+Math.random()*.65);
-}
-
-window.addCityHouse=()=>{
- const x=(Math.random()-.5)*15,z=(Math.random()-.5)*15;
- house(x,z,.8+Math.random()*.15);
+const screen=$('screen'),content=$('content');
+function toast(t){$('toast').textContent=t;$('toast').classList.add('show');clearTimeout(window.tt);window.tt=setTimeout(()=>$('toast').classList.remove('show'),2200)}
+function update(){ $('woodtop').textContent=wood>=1000000?(wood/1000000).toFixed(1)+'M':(wood/1000).toFixed(1)+'K';}
+function close(){screen.classList.remove('show');document.querySelectorAll('.nav').forEach(b=>b.classList.remove('active'))}
+const pages={
+heroes:['Heróis',()=>`<div class="card"><h3>⭐ Heróis</h3><p>Seleciona um herói para ver detalhes ou melhorar.</p></div><div class="grid">${[['👩🏻‍🚀','Molly'],['🧔🏻','Sergey'],['👩🏼','Natalia'],['🧑🏽','Bahiti']].map(h=>`<div class="card"><div style="font-size:38px">${h[0]}</div><b>${h[1]}</b><p class="muted">Nível ${heroLevel}</p><button class="action" data-a="detail" data-name="${h[1]}">Detalhes</button><button class="action gold" data-a="level">Melhorar (100)</button></div>`).join('')}</div>`],
+backpack:['Mochila',()=>`<div class="card"><h3>🎒 Inventário</h3><p>🪵 Madeira: ${wood.toLocaleString('pt-PT')}</p><p>🥩 Comida: ${food.toLocaleString('pt-PT')}</p><p>💎 Gemas: 13.735</p><button class="action" data-a="use">Usar baú de recursos ×${items}</button></div>`],
+shop:['Loja',()=>`<div class="card"><h3>🏪 Loja</h3><p>Loja de demonstração. As ações são locais.</p><button class="action" data-a="buywood">Comprar 1.000 madeira (100)</button><button class="action" data-a="buyfood">Comprar 1.000 comida (100)</button></div>`],
+alliance:['Aliança',()=>`<div class="card"><h3>🛡️ Aliança</h3><p>Ainda não estás numa aliança.</p><button class="action" data-a="join">Procurar aliança</button><button class="action" data-a="create">Criar aliança (1.000 madeira)</button><button class="action" data-a="help">Pedir ajuda</button></div>`],
+world:['Mundo',()=>`<div class="card"><h3>🗺️ Mapa do mundo</h3><div style="height:160px;background:linear-gradient(135deg,#9cc7f1,#e4f0ff);border-radius:12px;display:grid;place-items:center;font-size:35px">❄️ 🏔️ 🌲</div><p>Coordenadas X 125 · Y 280</p><button class="action" data-a="gather">Recolher madeira</button><button class="action" data-a="hunt">Caçar fera</button><button class="action" data-a="home">Voltar à cidade</button></div>`],
+exploration:['Exploração',()=>`<div class="card"><h3>⚔️ Exploração — estágio ${stage}</h3><p>Escolhe iniciar uma batalha de demonstração.</p><button class="action" data-a="battle">Iniciar batalha</button><button class="action" data-a="formation">Formação de heróis</button></div>`],
+events:['Eventos',()=>`<div class="card"><h3>⚔️ Eventos ativos</h3><p>Completa tarefas para receber recursos.</p><button class="action" data-a="claim">Receber recompensa</button></div>`],
+tasks:['Tarefas',()=>`<div class="card"><h3>📋 Tarefas diárias</h3><p>Construir edifício · Melhorar herói · Explorar</p><button class="action" data-a="claim">Receber recompensa</button></div>`],
+research:['Pesquisa',()=>`<div class="card"><h3>🧭 Centro de pesquisa</h3><button class="action" data-a="research">Pesquisa económica (250 madeira)</button><button class="action" data-a="research">Pesquisa militar (250 madeira)</button></div>`],
+offers:['Ofertas',()=>`<div class="card"><h3>🎁 Ofertas</h3><p>Pacotes de demonstração.</p><button class="action" data-a="claim">Recolher oferta grátis</button></div>`],
+starter:['Compra inicial',()=>`<div class="card"><h3>🧑🏻‍🚀 Pacote inicial</h3><button class="action gold" data-a="claim">Receber pacote grátis</button></div>`],
+seven:['Evento de 7 dias',()=>`<div class="card"><h3>🧊 Recompensas diárias</h3><p>Dia 1 — recursos</p><p>Dia 2 — experiência</p><button class="action" data-a="claim">Receber recompensa</button></div>`],
+ranking:['Classificação',()=>`<div class="card"><h3>⚖ Classificação</h3><p>1. Tu — 1.349.894 de poder</p><p>2. Jogador do Norte — 980.200</p></div>`],
+mail:['Correio',()=>`<div class="card"><h3>✉ Correio</h3><p>Bem-vindo à cidade gelada!</p><button class="action" data-a="claim">Receber presente</button></div>`],
+profile:['Perfil',()=>`<div class="card"><h3>👨🏻 Perfil do jogador</h3><p>Poder: 1.349.894</p><p>VIP 2 · Fornalha nível ${furnace}</p><button class="action" data-a="rename">Editar nome</button></div>`],
+resources:['Recursos',()=>`<div class="card"><h3>📦 Recursos</h3><p>🪵 Madeira: ${wood.toLocaleString('pt-PT')}</p><p>🥩 Comida: ${food.toLocaleString('pt-PT')}</p><button class="action" data-a="gather">Recolher +1.000 madeira</button><button class="action" data-a="food">Recolher +1.000 comida</button></div>`],
+shortcuts:['Atalhos',()=>`<div class="grid"><button data-a="build">🏠 Construir casa</button><button data-a="upgrade">🔥 Melhorar fornalha</button><button data-a="gather">🪵 Madeira</button><button data-a="food">🥩 Comida</button></div>`]
 };
-let angle=.72,dist=34,drag=null,pinch=null;
-function cameraUpdate(){
- camera.position.set(Math.sin(angle)*dist,dist*.67,Math.cos(angle)*dist);
- camera.lookAt(0,1,0);
+function open(k){if(!pages[k])return; $('title').textContent=pages[k][0];content.innerHTML=pages[k][1]();screen.classList.add('show');document.querySelectorAll('.nav').forEach(b=>b.classList.toggle('active',b.dataset.a===k))}
+function build(){if(wood<100){toast('Madeira insuficiente');return}wood-=100;let e=document.createElement('div');e.className='building';e.style.left=(12+Math.random()*76)+'%';e.style.top=(35+Math.random()*52)+'%';e.innerHTML='<div class="base"></div><div class="roof"></div><div class="door"></div><div class="window"></div>';$('city').appendChild(e);update();toast('Casa construída!')}
+document.addEventListener('click',e=>{
+const b=e.target.closest('[data-a]');if(!b)return;
+switch(b.dataset.a){
+case'close':close();break;
+case'heroes':case'backpack':case'shop':case'alliance':case'world':case'exploration':case'events':case'tasks':case'research':case'offers':case'starter':case'seven':case'ranking':case'mail':case'profile':case'resources':case'shortcuts':open(b.dataset.a);break;
+case'build':build();break;
+case'gather':wood+=1000;update();toast('+1.000 madeira recolhida');if(screen.classList.contains('show'))open('world');break;
+case'food':food+=1000;toast('+1.000 comida recolhida');open('resources');break;
+case'upgrade':if(wood<500){toast('Precisas de 500 madeira');break}wood-=500;furnace++;update();toast('Fornalha nível '+furnace);open('shortcuts');break;
+case'level':if(wood<100){toast('Precisas de 100 madeira');break}wood-=100;heroLevel++;update();toast('Herói melhorado para nível '+heroLevel);open('heroes');break;
+case'detail':toast('Detalhes de '+b.dataset.name+' — demonstração');break;
+case'use':if(items>0){items--;wood+=500;update();toast('Baú usado: +500 madeira')}else toast('Sem itens');open('backpack');break;
+case'buywood':wood+=1000;update();toast('Compra demonstrativa: +1.000 madeira');open('shop');break;
+case'buyfood':food+=1000;toast('Compra demonstrativa: +1.000 comida');open('shop');break;
+case'join':toast('A procurar alianças...');break;
+case'create':if(wood>=1000){wood-=1000;update();toast('Aliança de demonstração criada')}else toast('Precisas de 1.000 madeira');open('alliance');break;
+case'help':toast('Pedido de ajuda enviado');break;
+case'home':close();toast('De volta à cidade');break;
+case'battle':stage++;wood+=250;food+=250;update();toast('Vitória de demonstração!');open('exploration');break;
+case'formation':toast('Formação demonstrativa: infantaria, lanceiros e atiradores');break;
+case'claim':wood+=500;food+=500;update();toast('Recompensa: +500 madeira e comida');break;
+case'research':if(wood>=250){wood-=250;update();toast('Pesquisa iniciada')}else toast('Precisas de 250 madeira');open('research');break;
+case'hunt':food+=500;toast('Caça concluída: +500 comida');break;
+case'rename':{let n=prompt('Novo nome do jogador');if(n)toast('Nome alterado para '+n);break}
 }
-window.centerCamera=()=>{angle=.72;dist=34;cameraUpdate()};
-cameraUpdate();
-
-renderer.domElement.addEventListener("pointerdown",e=>{
- if(e.clientY<145||e.clientX>innerWidth-190&&e.clientY<590)return;
- drag={x:e.clientX,y:e.clientY,id:e.pointerId};
- renderer.domElement.setPointerCapture(e.pointerId);
 });
-renderer.domElement.addEventListener("pointermove",e=>{
- if(!drag||drag.id!==e.pointerId)return;
- angle-=(e.clientX-drag.x)*.008;
- dist=Math.max(16,Math.min(65,dist+(e.clientY-drag.y)*.06));
- drag.x=e.clientX;drag.y=e.clientY;
- cameraUpdate();
-});
-renderer.domElement.addEventListener("pointerup",()=>drag=null);
-renderer.domElement.addEventListener("pointercancel",()=>drag=null);
-renderer.domElement.addEventListener("wheel",e=>{
- dist=Math.max(16,Math.min(65,dist+e.deltaY*.035));cameraUpdate();
-},{passive:true});
-
-let touchDistance=0;
-renderer.domElement.addEventListener("touchstart",e=>{
- if(e.touches.length===2){
-  const a=e.touches[0],b=e.touches[1];
-  touchDistance=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);
- }
-},{passive:true});
-renderer.domElement.addEventListener("touchmove",e=>{
- if(e.touches.length!==2)return;
- const a=e.touches[0],b=e.touches[1];
- const d=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);
- if(touchDistance){
-  dist=Math.max(16,Math.min(65,dist+(touchDistance-d)*.045));
-  cameraUpdate();
- }
- touchDistance=d;
-},{passive:true});
-
-function animate(){
- requestAnimationFrame(animate);
- renderer.render(scene,camera);
-}
-animate();
-
-addEventListener("resize",()=>{
- camera.aspect=innerWidth/innerHeight;
- camera.updateProjectionMatrix();
- renderer.setSize(innerWidth,innerHeight);
-});
+let zoom=1,dx=0,dy=0,px=0,py=0,pinch=0;
+$('scene').addEventListener('touchstart',e=>{if(e.touches.length===1){px=e.touches[0].clientX;py=e.touches[0].clientY}else if(e.touches.length===2){pinch=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY)}},{passive:true});
+$('scene').addEventListener('touchmove',e=>{if(e.touches.length===2){let d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);zoom=Math.max(.75,Math.min(1.4,zoom+(d-pinch)*.001));pinch=d}else if(e.touches.length===1){dx=Math.max(-70,Math.min(70,dx+(e.touches[0].clientX-px)*.25));dy=Math.max(-70,Math.min(70,dy+(e.touches[0].clientY-py)*.25));px=e.touches[0].clientX;py=e.touches[0].clientY}$('city').style.transform=`translate(${dx}px,${dy}px) scale(${zoom})`},{passive:true});
+let t=49;setInterval(()=>{t=t>0?t-1:59;$('timer').textContent='00:'+String(t).padStart(2,'0')},1000);
+})();
 </script>
 </body>
 </html>
