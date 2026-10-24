@@ -3,315 +3,472 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Whiteout 3D Game</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Frozen Kingdom — 3D Strategy</title>
 <style>
-:root{--gold:#ffc95b;--panel:#172735;--panel2:#243b4b;--text:#f3f6fa;--blue:#64c8ed}
 *{box-sizing:border-box}
-body{margin:0;background:#101c27;color:var(--text);font-family:Arial,sans-serif;font-size:14px}
-button{font:inherit;color:white;border:1px solid #688397;border-radius:7px;background:linear-gradient(#405d70,#263b4c);padding:10px;cursor:pointer}
-button:disabled{opacity:.45;cursor:not-allowed}
-#app{max-width:600px;margin:auto;min-height:100vh;background:#162633;overflow:hidden}
-header{padding:10px;background:#1b2d3b;border-bottom:2px solid #405767}
-.logo{font-size:19px;font-weight:900;color:var(--gold);text-align:center;margin-bottom:10px}
-.resources{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
-.resource{background:#304655;border-radius:5px;padding:7px 2px;text-align:center;font-size:12px}
-.resource b{display:block;color:#ffe09a;font-size:14px;margin-top:3px}
-main{min-height:65vh}
+:root{--gold:#f4c875;--panel:#172735;--line:#526b7b}
+body{margin:0;background:#0a1520;color:#f4f6f8;font-family:Arial,sans-serif}
+button{border:1px solid #708b9b;background:linear-gradient(#405e73,#203747);color:white;border-radius:6px;padding:10px;cursor:pointer}
+button:disabled{opacity:.4}
+#app{max-width:650px;margin:auto;min-height:100dvh;background:#142532}
+header{background:#101e2a;padding:10px;border-bottom:1px solid var(--line)}
+.logo{text-align:center;font-weight:900;font-size:19px;color:var(--gold);padding:5px}
+.resources{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:7px}
+.resource{background:#293e4c;border-radius:5px;padding:7px 2px;text-align:center;font-size:11px}
+.resource b{display:block;color:#ffe0a0;margin-top:4px;font-size:14px}
+#world{height:56dvh;min-height:350px;max-height:540px;position:relative;background:#b7d5df;overflow:hidden;touch-action:none}
+#view{width:100%;height:100%;display:block;touch-action:none}
+#cityLabel{position:absolute;top:9px;left:9px;background:#152b3cdd;padding:8px;border-radius:6px;font-size:12px;pointer-events:none}
+#hint{position:absolute;bottom:8px;left:8px;right:8px;text-align:center;color:#203847;text-shadow:0 1px #fff;font-size:11px;pointer-events:none}
+#loadError{display:none;position:absolute;inset:30% 8px auto;background:#142735eF;padding:14px;border-radius:8px}
 .screen{display:none;padding:12px}
 .screen.active{display:block}
-h2{margin:5px 0 12px;font-size:20px}
+h2{font-size:20px;margin:5px 0 12px}
 h3{margin:5px 0 8px}
-.small{font-size:12px;color:#b9cad5}
-#city{position:relative;height:390px;overflow:hidden;border-radius:10px;background:linear-gradient(#93c6dc 0%,#d8edf0 48%,#829ba5 49%,#536d79 100%)}
-.mountain{position:absolute;bottom:48%;width:0;height:0;border-left:110px solid transparent;border-right:110px solid transparent;border-bottom:180px solid #a6c5d0}
-.m1{left:-60px}.m2{right:-70px;border-bottom-color:#d7e6e8}
-.snow{position:absolute;bottom:0;width:100%;height:52%;background:linear-gradient(165deg,#d9e8e8,#aabfc6)}
-.road{position:absolute;left:40%;bottom:-20px;width:25%;height:240px;background:#879da5;transform:skew(-20deg);border-left:5px solid #dbe5e5;border-right:5px solid #dbe5e5}
-.city-title{position:absolute;top:10px;left:10px;padding:7px;background:#243b4bd9;border-radius:6px;font-weight:bold}
-.building{position:absolute;width:104px;height:100px;filter:drop-shadow(3px 5px 3px #33495566)}
-.building .roof{position:absolute;top:0;left:0;width:104px;height:38px;background:#536b78;clip-path:polygon(50% 0,100% 45%,50% 100%,0 45%);border-bottom:2px solid #e4eded}
-.building .front{position:absolute;top:30px;left:0;width:65px;height:60px;background:#e4e8e4;clip-path:polygon(0 0,100% 25%,100% 100%,0 78%)}
-.building .side{position:absolute;top:30px;right:0;width:42px;height:60px;background:#9eafb4;clip-path:polygon(0 0,100% -15%,100% 78%,0 100%)}
-.building .door{position:absolute;bottom:9px;left:30px;width:16px;height:31px;background:#566875;border:2px solid #b8c9ce;z-index:2}
-.building .window{position:absolute;top:43px;left:7px;width:15px;height:13px;background:#6bb4cf;border:2px solid white;z-index:2}
-.furnace{width:135px;height:160px;left:calc(50% - 68px);top:78px}
-.furnace .roof{width:135px;height:54px;background:linear-gradient(135deg,#bdcbd0,#657d88,#d8e0e1)}
-.furnace .front{top:43px;width:83px;height:105px;background:linear-gradient(90deg,#8a9fa8,#e0e6e6)}
-.furnace .side{top:43px;width:54px;height:105px;background:linear-gradient(90deg,#718894,#a7b8bd)}
-.furnace .door{bottom:12px;left:35px;width:22px;height:50px;background:#334956}
-.furnace .window{top:57px;left:10px;width:19px;height:18px}
-.building-label{position:absolute;top:100%;left:-8px;width:120px;text-align:center;color:#18303b;font-weight:bold;text-shadow:0 1px white;font-size:12px}
-.b1{left:7%;top:220px}.b2{right:5%;top:220px}.b3{left:16%;top:105px;transform:scale(.75)}.b4{right:14%;top:115px;transform:scale(.8)}
-.city-controls{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:10px}
-.card{background:var(--panel);border:1px solid #405869;border-radius:9px;padding:12px;margin-bottom:10px}
-.hero-list{display:grid;gap:10px}
-.hero{display:grid;grid-template-columns:76px 1fr;gap:10px;background:#213746;border:1px solid #506879;border-radius:9px;padding:10px}
-.portrait{height:94px;border-radius:7px;background:linear-gradient(#a5c6d1,#405d70);display:flex;align-items:center;justify-content:center;font-size:40px;border:2px solid #718f9f}
-.portrait img{width:100%;height:100%;object-fit:cover;border-radius:5px}
-.hero-name{font-weight:bold;font-size:16px;color:#ffdb8c}
-.level-line{display:flex;justify-content:space-between;margin:9px 0 5px}
-.progress{height:7px;background:#0e1a22;border-radius:5px;overflow:hidden;margin-bottom:9px}
-.progress span{display:block;height:100%;background:linear-gradient(90deg,#55bfe9,#ffe08a)}
-.hero-actions{display:flex;gap:6px;flex-wrap:wrap}
-.hero-actions button{flex:1}
-.primary{background:linear-gradient(#bd8c35,#80571c);border-color:#f2ce7a}
-nav{position:sticky;bottom:0;display:grid;grid-template-columns:repeat(5,1fr);gap:3px;padding:7px;background:#101d27;border-top:1px solid #536c7c;z-index:5}
-nav button{padding:9px 2px;font-size:11px}
+.small{font-size:12px;color:#b9cbd5;line-height:1.5}
+.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:8px}
+.card{background:var(--panel);border:1px solid #3e5869;border-radius:8px;padding:11px;margin:8px 0}
+.hero{display:grid;grid-template-columns:76px 1fr;gap:10px;background:#203748;border:1px solid var(--line);border-radius:8px;padding:9px;margin-bottom:9px}
+.portrait{height:94px;border:2px solid #718d9f;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:36px;background:linear-gradient(145deg,#b7dce5,#304a5b)}
+.heroName{color:var(--gold);font-size:16px;font-weight:bold}
+.row{display:flex;justify-content:space-between;gap:5px;margin:8px 0;font-size:12px}
+.bar{height:7px;background:#09141c;border-radius:5px;overflow:hidden;margin:6px 0 9px}
+.bar span{display:block;height:100%;background:linear-gradient(90deg,#56bfe9,#ffdc85)}
+.heroActions{display:flex;gap:5px}
+.heroActions button{flex:1;font-size:12px}
+.gold{background:linear-gradient(#ba8b38,#79531d);border-color:#edcb7e}
+.buildingItem{display:flex;align-items:center;gap:10px}
+.buildingItem .symbol{font-size:27px}
+.buildingItem .info{flex:1}
+nav{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;position:sticky;bottom:0;background:#0d1a25;border-top:1px solid #526b7b;padding:6px;z-index:5}
+nav button{font-size:11px;padding:9px 1px}
 nav button.active{border-color:var(--gold);color:var(--gold)}
-#toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#0d1720;border:1px solid #6c8796;padding:11px 15px;border-radius:8px;display:none;z-index:20;max-width:90%;text-align:center}
-input{width:100%;background:#10202b;color:white;border:1px solid #647f8d;border-radius:5px;padding:9px;margin:5px 0}
-footer{text-align:center;padding:12px;color:#8399a6;font-size:11px}
+#toast{display:none;position:fixed;bottom:76px;left:50%;transform:translateX(-50%);background:#101f2b;border:1px solid #8198a5;border-radius:8px;padding:11px 14px;z-index:20;width:max-content;max-width:90%;text-align:center}
+footer{text-align:center;color:#839aa8;padding:12px;font-size:10px}
 </style>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+  }
+}
+</script>
 </head>
 <body>
 <div id="app">
 <header>
-  <div class="logo">❄ WHITEOUT · SURVIVAL</div>
+  <div class="logo">❄ FROZEN KINGDOM · SURVIVAL</div>
   <div class="resources">
-    <div class="resource">🪵 Madeira<b id="wood">10000</b></div>
-    <div class="resource">🥩 Comida<b id="food">10000</b></div>
-    <div class="resource">⛏️ Ferro<b id="iron">5000</b></div>
-    <div class="resource">💎 Gemas<b id="gems">500</b></div>
+    <div class="resource">🪵 MADEIRA<b id="wood">10.000</b></div>
+    <div class="resource">🥩 COMIDA<b id="food">10.000</b></div>
+    <div class="resource">⛏️ FERRO<b id="iron">5.000</b></div>
+    <div class="resource">💎 GEMAS<b id="gems">500</b></div>
   </div>
 </header>
 
-<main>
+<div id="world">
+  <canvas id="view"></canvas>
+  <div id="cityLabel">🏔️ CIDADE NEVADA · <span id="furnaceLevel">FORNALHA 1</span></div>
+  <div id="hint">Arraste para girar a câmera · toque numa construção</div>
+  <div id="loadError">Não foi possível iniciar o motor 3D. Verifique sua conexão e recarregue a página.</div>
+</div>
+
+<div class="actions">
+  <button onclick="collectResources()">📦 Recolher</button>
+  <button onclick="upgradeFurnace()">🔥 Melhorar fornalha</button>
+  <button onclick="showScreen('heroesScreen')">🦸 Heróis</button>
+</div>
+
 <section id="cityScreen" class="screen active">
-  <div id="city">
-    <div class="mountain m1"></div><div class="mountain m2"></div><div class="snow"></div><div class="road"></div>
-    <div class="city-title">🏔️ Sua cidade · Dia 1</div>
-    <div class="building furnace" id="furnace">
-      <div class="roof"></div><div class="front"></div><div class="side"></div><div class="door"></div><div class="window"></div><div class="building-label" id="furnaceLabel">Fornalha · Nível 1</div>
-    </div>
-    <div class="building b1"><div class="roof"></div><div class="front"></div><div class="side"></div><div class="door"></div><div class="window"></div><div class="building-label">Casa</div></div>
-    <div class="building b2"><div class="roof"></div><div class="front"></div><div class="side"></div><div class="door"></div><div class="window"></div><div class="building-label">Abrigo</div></div>
-    <div class="building b3"><div class="roof"></div><div class="front"></div><div class="side"></div><div class="door"></div><div class="window"></div><div class="building-label">Oficina</div></div>
-    <div class="building b4"><div class="roof"></div><div class="front"></div><div class="side"></div><div class="door"></div><div class="window"></div><div class="building-label">Enfermaria</div></div>
+  <div class="card">
+    <h3 id="selectedName">🔥 Fornalha central</h3>
+    <p class="small" id="selectedInfo">Selecione uma construção na cidade para ver detalhes.</p>
+    <button class="gold" id="selectedAction" onclick="upgradeSelected()">Melhorar construção</button>
   </div>
-  <div class="city-controls">
-    <button onclick="collect()">📦 Recolher</button>
-    <button onclick="upgradeFurnace()">🔥 Melhorar fornalha</button>
-    <button onclick="showScreen('heroesScreen')">🦸 Heróis</button>
-  </div>
-  <div class="card" style="margin-top:10px">
-    <h3>📋 Tarefas da cidade</h3>
-    <p class="small">Recolha recursos e desenvolva sua cidade. Esta versão é uma base de protótipo; as regras e os gráficos originais ainda precisam ser integrados.</p>
+  <div class="card">
+    <h3>❄️ Sobrevivência</h3>
+    <p class="small">Desenvolva sua cidade, mantenha a fornalha e reúna recursos para construir.</p>
+    <p id="status" class="small">Sua cidade está pronta.</p>
   </div>
 </section>
 
 <section id="heroesScreen" class="screen">
   <h2>🦸 Heróis</h2>
-  <p class="small">Cada herói possui seu próprio nível. O limite é 80.</p>
-  <div id="heroList" class="hero-list"></div>
+  <p class="small">Progresso individual. Nível máximo configurado: 80.</p>
+  <div id="heroList"></div>
 </section>
 
 <section id="buildScreen" class="screen">
   <h2>🏗️ Construções</h2>
-  <div class="card"><h3>🔥 Fornalha</h3><p id="furnaceInfo">Nível 1</p><button class="primary" onclick="upgradeFurnace()">Melhorar fornalha</button></div>
-  <div class="card"><h3>🪵 Madeira</h3><p class="small">Recolha madeira para financiar as melhorias.</p><button onclick="collect()">Recolher recursos</button></div>
+  <div id="buildingList"></div>
 </section>
 
 <section id="bagScreen" class="screen">
-  <h2>🎒 Recursos</h2>
-  <div class="card">🪵 Madeira: <b id="wood2">10000</b></div>
-  <div class="card">🥩 Comida: <b id="food2">10000</b></div>
-  <div class="card">⛏️ Ferro: <b id="iron2">5000</b></div>
-  <div class="card">💎 Gemas: <b id="gems2">500</b></div>
-  <button onclick="collect()">Recolher recursos</button>
+  <h2>🎒 Inventário</h2>
+  <div class="card">🪵 Madeira: <b id="woodInv"></b></div>
+  <div class="card">🥩 Comida: <b id="foodInv"></b></div>
+  <div class="card">⛏️ Ferro: <b id="ironInv"></b></div>
+  <div class="card">💎 Gemas: <b id="gemsInv"></b></div>
+  <button onclick="collectResources()">Recolher recursos</button>
 </section>
 
 <section id="settingsScreen" class="screen">
-  <h2>⚙️ Configurações</h2>
+  <h2>⚙️ Opções</h2>
   <div class="card">
-    <h3>Dados do protótipo</h3>
-    <p class="small">O progresso é guardado neste navegador. Limpar os dados do navegador pode apagar o progresso.</p>
+    <p class="small">O progresso fica guardado neste navegador.</p>
     <button onclick="resetGame()">Reiniciar progresso</button>
   </div>
+  <div class="card">
+    <h3>Sobre esta versão</h3>
+    <p class="small">Motor 3D Three.js com cidade gerada proceduralmente. Os modelos, texturas, heróis, animações e regras proprietárias do jogo original ainda não estão integrados.</p>
+  </div>
 </section>
-</main>
 
 <nav>
   <button class="active" data-screen="cityScreen">🏔️<br>Cidade</button>
   <button data-screen="heroesScreen">🦸<br>Heróis</button>
   <button data-screen="buildScreen">🏗️<br>Construções</button>
-  <button data-screen="bagScreen">🎒<br>Recursos</button>
+  <button data-screen="bagScreen">🎒<br>Inventário</button>
   <button data-screen="settingsScreen">⚙️<br>Opções</button>
 </nav>
-<footer>Protótipo independente · Whiteout 3D Game</footer>
+<footer>Protótipo 3D independente · modelos originais ainda necessários</footer>
 </div>
 <div id="toast" role="status"></div>
 
-<script>
-"use strict";
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
-const MAX_HERO_LEVEL = 80;
-const INITIAL_STATE = {
-  wood:10000, food:10000, iron:5000, gems:500, furnace:1,
+const MAX_LEVEL=80;
+const INITIAL={
+  wood:10000,food:10000,iron:5000,gems:500,furnace:1,
   heroes:[
-    {id:"hero-alba",name:"Alba",level:1,icon:"❄️",color:"#91cce2"},
-    {id:"hero-boris",name:"Boris",level:1,icon:"🛡️",color:"#b7a1df"},
-    {id:"hero-clara",name:"Clara",level:1,icon:"🏹",color:"#e5a1a9"},
-    {id:"hero-diego",name:"Diego",level:1,icon:"🔥",color:"#e4b66b"},
-    {id:"hero-elsa",name:"Elsa",level:1,icon:"✨",color:"#8edbd4"}
+    {id:"h1",name:"Alba",level:1,icon:"❄️",power:120,color:"#85cde5"},
+    {id:"h2",name:"Boris",level:1,icon:"🛡️",power:130,color:"#c4a4df"},
+    {id:"h3",name:"Clara",level:1,icon:"🏹",power:115,color:"#e9a5b0"},
+    {id:"h4",name:"Diego",level:1,icon:"🔥",power:140,color:"#e8b66d"},
+    {id:"h5",name:"Elsa",level:1,icon:"✨",power:125,color:"#8cddd5"}
+  ],
+  buildings:[
+    {id:"furnace",name:"Fornalha central",icon:"🔥",level:1,x:0,z:0,cost:0},
+    {id:"house1",name:"Casa dos sobreviventes",icon:"🏠",level:1,x:-5,z:4,cost:500},
+    {id:"workshop",name:"Oficina",icon:"⚒️",level:1,x:5,z:4,cost:600},
+    {id:"hospital",name:"Enfermaria",icon:"🏥",level:1,x:-5,z:-4,cost:700},
+    {id:"barracks",name:"Quartel",icon:"🏰",level:1,x:5,z:-4,cost:800},
+    {id:"sawmill",name:"Serraria",icon:"🪵",level:1,x:-8,z:0,cost:450},
+    {id:"warehouse",name:"Armazém",icon:"📦",level:1,x:8,z:0,cost:650}
   ]
 };
-
 let state;
-try {
-  const saved = localStorage.getItem("whiteoutPrototypeStateV2");
-  state = saved ? JSON.parse(saved) : structuredClone(INITIAL_STATE);
-  if (!Array.isArray(state.heroes) || state.heroes.length !== INITIAL_STATE.heroes.length) throw new Error("invalid state");
-  state.heroes.forEach((h,i) => {
-    if (!h.id || !Number.isFinite(h.level)) throw new Error("invalid hero");
-    h.level = Math.max(1, Math.min(MAX_HERO_LEVEL, Math.floor(h.level)));
-    h.name = INITIAL_STATE.heroes[i].name;
-    h.icon = INITIAL_STATE.heroes[i].icon;
-    h.color = INITIAL_STATE.heroes[i].color;
-  });
-} catch(e) {
-  state = structuredClone(INITIAL_STATE);
+try{
+ const raw=localStorage.getItem("frozenKingdom3D");
+ state=raw?JSON.parse(raw):structuredClone(INITIAL);
+ if(!Array.isArray(state.heroes)||!Array.isArray(state.buildings))throw Error("bad save");
+ state.heroes.forEach((h,i)=>{
+  h.id=INITIAL.heroes[i]?.id||h.id;
+  h.level=Math.max(1,Math.min(MAX_LEVEL,Math.floor(Number(h.level)||1)));
+ });
+}catch(e){state=structuredClone(INITIAL)}
+let selectedId="furnace";
+function save(){try{localStorage.setItem("frozenKingdom3D",JSON.stringify(state))}catch(e){}}
+function fmt(n){return Math.floor(n).toLocaleString("pt-BR")}
+function toast(s){
+ const el=document.getElementById("toast");
+ el.textContent=s;el.style.display="block";
+ clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.style.display="none",2300);
 }
-
-function saveState(){
-  try { localStorage.setItem("whiteoutPrototypeStateV2", JSON.stringify(state)); }
-  catch(e) { console.warn("Não foi possível guardar o progresso.",e); }
-}
-
-function toast(message){
-  const el=document.getElementById("toast");
-  el.textContent=message;
-  el.style.display="block";
-  clearTimeout(toast.timer);
-  toast.timer=setTimeout(()=>el.style.display="none",2300);
-}
-
 function renderResources(){
-  ["wood","food","iron","gems"].forEach(key=>{
-    document.getElementById(key).textContent=Math.floor(state[key]).toLocaleString("pt-BR");
-    const second=document.getElementById(key+"2");
-    if(second) second.textContent=Math.floor(state[key]).toLocaleString("pt-BR");
-  });
-  document.getElementById("furnaceLabel").textContent="Fornalha · Nível "+state.furnace;
-  document.getElementById("furnaceInfo").textContent="Nível "+state.furnace;
+ ["wood","food","iron","gems"].forEach(k=>{
+  document.getElementById(k).textContent=fmt(state[k]);
+  document.getElementById(k+"Inv").textContent=fmt(state[k]);
+ });
+ document.getElementById("furnaceLevel").textContent="FORNALHA "+state.furnace;
 }
+function showScreen(id){
+ document.querySelectorAll(".screen").forEach(x=>x.classList.toggle("active",x.id===id));
+ document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("active",x.dataset.screen===id));
+ if(id==="heroesScreen")renderHeroes();
+ if(id==="buildScreen")renderBuildings();
+}
+document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>showScreen(b.dataset.screen)));
 
 function renderHeroes(){
-  const list=document.getElementById("heroList");
-  list.innerHTML="";
-  state.heroes.forEach(hero=>{
-    const card=document.createElement("article");
-    card.className="hero";
-    card.dataset.heroId=hero.id;
-
-    const portrait=document.createElement("div");
-    portrait.className="portrait";
-    portrait.style.background="linear-gradient(145deg,"+hero.color+",#263d4d)";
-    portrait.textContent=hero.icon;
-    portrait.setAttribute("aria-label","Retrato ilustrativo de "+hero.name);
-
-    const info=document.createElement("div");
-    const name=document.createElement("div");
-    name.className="hero-name";
-    name.textContent=hero.name;
-
-    const line=document.createElement("div");
-    line.className="level-line";
-    const level=document.createElement("span");
-    level.textContent="Nível "+hero.level;
-    level.dataset.heroLevel="";
-    const max=document.createElement("span");
-    max.className="small";
-    max.textContent=hero.level>=MAX_HERO_LEVEL?"MÁXIMO":"Máximo 80";
-    line.append(level,max);
-
-    const progress=document.createElement("div");
-    progress.className="progress";
-    const fill=document.createElement("span");
-    fill.style.width=(hero.level/MAX_HERO_LEVEL*100)+"%";
-    progress.appendChild(fill);
-
-    const actions=document.createElement("div");
-    actions.className="hero-actions";
-    const upgrade=document.createElement("button");
-    upgrade.className="primary";
-    upgrade.dataset.heroUpgrade="";
-    upgrade.textContent=hero.level>=MAX_HERO_LEVEL?"NÍVEL MÁXIMO 80":"⬆ Melhorar";
-    upgrade.disabled=hero.level>=MAX_HERO_LEVEL;
-    upgrade.addEventListener("click",()=>upgradeHero(hero.id));
-
-    const details=document.createElement("button");
-    details.textContent="Detalhes";
-    details.addEventListener("click",()=>toast(hero.name+" · Nível "+hero.level+" de 80"));
-
-    actions.append(upgrade,details);
-    info.append(name,line,progress,actions);
-    card.append(portrait,info);
-    list.appendChild(card);
-  });
+ const root=document.getElementById("heroList");root.innerHTML="";
+ state.heroes.forEach(hero=>{
+  const card=document.createElement("article");card.className="hero";
+  const portrait=document.createElement("div");portrait.className="portrait";
+  portrait.style.background=`linear-gradient(145deg,${hero.color},#253d4c)`;
+  portrait.textContent=hero.icon;
+  const info=document.createElement("div");
+  const name=document.createElement("div");name.className="heroName";name.textContent=hero.name;
+  const row=document.createElement("div");row.className="row";
+  const level=document.createElement("span");level.textContent=`Nível ${hero.level}`;
+  const max=document.createElement("span");max.textContent=hero.level>=MAX_LEVEL?"MÁXIMO":"Máximo 80";
+  row.append(level,max);
+  const bar=document.createElement("div");bar.className="bar";
+  const fill=document.createElement("span");fill.style.width=(hero.level/MAX_LEVEL*100)+"%";bar.append(fill);
+  const power=document.createElement("p");power.className="small";power.textContent="Poder: "+fmt(hero.power*hero.level);
+  const actions=document.createElement("div");actions.className="heroActions";
+  const up=document.createElement("button");up.className="gold";
+  up.disabled=hero.level>=MAX_LEVEL;up.textContent=hero.level>=MAX_LEVEL?"NÍVEL MÁXIMO 80":"⬆ Melhorar";
+  up.addEventListener("click",()=>upgradeHero(hero.id));
+  const detail=document.createElement("button");detail.textContent="Detalhes";
+  detail.addEventListener("click",()=>toast(`${hero.name}: nível ${hero.level}/80 · poder ${fmt(hero.power*hero.level)}`));
+  actions.append(up,detail);info.append(name,row,bar,power,actions);card.append(portrait,info);root.append(card);
+ });
 }
-
 function upgradeHero(id){
-  const hero=state.heroes.find(h=>h.id===id);
-  if(!hero) return;
-  if(hero.level>=MAX_HERO_LEVEL){
-    hero.level=MAX_HERO_LEVEL;
-    saveState();
-    renderHeroes();
-    toast(hero.name+" já está no nível máximo 80.");
-    return;
-  }
-  hero.level=Math.min(MAX_HERO_LEVEL,hero.level+1);
-  saveState();
-  renderHeroes();
-  toast(hero.name+" evoluiu para o nível "+hero.level+".");
+ const hero=state.heroes.find(h=>h.id===id);if(!hero)return;
+ if(hero.level>=MAX_LEVEL){hero.level=MAX_LEVEL;save();renderHeroes();toast("Nível máximo: 80.");return}
+ hero.level=Math.min(MAX_LEVEL,hero.level+1);
+ save();renderHeroes();toast(`${hero.name} evoluiu para o nível ${hero.level}.`);
 }
-
-function collect(){
-  state.wood+=500;
-  state.food+=500;
-  state.iron+=200;
-  saveState();
-  renderResources();
-  toast("Recursos recolhidos!");
+function collectResources(){
+ state.wood+=500;state.food+=500;state.iron+=200;save();renderResources();toast("Recursos recolhidos!");
 }
-
 function upgradeFurnace(){
-  const cost=state.furnace*1000;
-  if(state.wood<cost || state.iron<cost/2){
-    toast("Recursos insuficientes. Precisa de "+cost+" madeira e "+cost/2+" ferro.");
-    return;
-  }
-  state.wood-=cost;
-  state.iron-=cost/2;
-  state.furnace++;
-  saveState();
-  renderResources();
-  toast("Fornalha melhorada para o nível "+state.furnace+".");
+ const b=state.buildings.find(x=>x.id==="furnace");
+ const wc=state.furnace*1000,ic=state.furnace*500;
+ if(state.wood<wc||state.iron<ic){toast(`Precisa de ${fmt(wc)} madeira e ${fmt(ic)} ferro.`);return}
+ state.wood-=wc;state.iron-=ic;state.furnace++;b.level=state.furnace;
+ save();renderResources();renderBuildings();updateSelection();rebuildCity();toast("Fornalha melhorada!");
 }
-
-function showScreen(id){
-  document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("active",s.id===id));
-  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.screen===id));
-  if(id==="heroesScreen") renderHeroes();
+function renderBuildings(){
+ const root=document.getElementById("buildingList");root.innerHTML="";
+ state.buildings.forEach(b=>{
+  const card=document.createElement("div");card.className="card buildingItem";
+  const sym=document.createElement("div");sym.className="symbol";sym.textContent=b.icon;
+  const info=document.createElement("div");info.className="info";
+  const title=document.createElement("h3");title.textContent=b.name;
+  const desc=document.createElement("p");desc.className="small";desc.textContent=`Nível ${b.level} · custo ${fmt(b.level*500)} madeira`;
+  const button=document.createElement("button");button.textContent="Selecionar";
+  button.addEventListener("click",()=>{selectBuilding(b.id);showScreen("cityScreen")});
+  info.append(title,desc);card.append(sym,info,button);root.append(card);
+ });
 }
-
-document.querySelectorAll("nav button").forEach(button=>{
-  button.addEventListener("click",()=>showScreen(button.dataset.screen));
-});
-
+function selectBuilding(id){
+ selectedId=id;updateSelection();if(cityReady)highlightSelection();
+}
+function updateSelection(){
+ const b=state.buildings.find(x=>x.id===selectedId);if(!b)return;
+ document.getElementById("selectedName").textContent=b.icon+" "+b.name+" · nível "+b.level;
+ document.getElementById("selectedInfo").textContent=b.id==="furnace"?"Centro da cidade. Custo da próxima melhoria: "+fmt(state.furnace*1000)+" madeira e "+fmt(state.furnace*500)+" ferro.":"Construção selecionada. Próxima melhoria: "+fmt(b.level*500)+" madeira.";
+ document.getElementById("selectedAction").textContent=b.id==="furnace"?"Melhorar fornalha":"Melhorar construção";
+}
+function upgradeSelected(){
+ const b=state.buildings.find(x=>x.id===selectedId);if(!b)return;
+ if(b.id==="furnace"){upgradeFurnace();return}
+ const cost=b.level*500;
+ if(state.wood<cost){toast("Madeira insuficiente: precisa de "+fmt(cost)+".");return}
+ state.wood-=cost;b.level++;save();renderResources();renderBuildings();updateSelection();rebuildCity();toast(b.name+" melhorada!");
+}
 function resetGame(){
-  if(!confirm("Apagar o progresso deste protótipo e recomeçar?")) return;
-  state=structuredClone(INITIAL_STATE);
-  saveState();
-  renderResources();
-  renderHeroes();
-  showScreen("cityScreen");
-  toast("Progresso reiniciado.");
+ if(!confirm("Apagar o progresso salvo neste navegador?"))return;
+ state=structuredClone(INITIAL);save();renderResources();renderHeroes();renderBuildings();selectedId="furnace";updateSelection();rebuildCity();showScreen("cityScreen");toast("Progresso reiniciado.");
 }
 
-renderResources();
-renderHeroes();
+/* CIDADE 3D PROCEDURAL */
+let scene,camera,renderer,controls,raycaster,pointer,cityRoot,cityReady=false;
+const clickable=[];
+function mat(color,roughness=0.85){return new THREE.MeshStandardMaterial({color,roughness})}
+const snowMat=mat("#dce9e9"),iceMat=mat("#a9cbd5"),woodMat=mat("#76584a"),darkMat=mat("#354d5b"),roofMat=mat("#617f8d");
+function box(parent,w,h,d,material,x,y,z){
+ const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);
+ m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;
+}
+function addBuilding(b){
+ const group=new THREE.Group();group.position.set(b.x,0,b.z);group.userData.buildingId=b.id;
+ const isF=b.id==="furnace",w=isF?2.7:1.8,h=isF?3.0:1.65,d=isF?2.6:1.8;
+ box(group,w,h,d,mat(isF?"#9aaeb6":"#d1d9d8"),0,h/2,0);
+ box(group,w+0.28,.18,d+0.28,roofMat,0,h+.05,0);
+ const roof=new THREE.Mesh(new THREE.ConeGeometry(isF?2.0:1.45,.95,4),mat(isF?"#647d89":"#7e9aa5"));
+ roof.position.set(0,h+.48,0);roof.rotation.y=Math.PI/4;roof.castShadow=true;group.add(roof);
+ box(group,.62,isF?1.4:.8,.13,d/2+.08,d*0.03,isF?.72:.42,0,d/2+.04);
+ box(group,.25,.3,.09,iceMat,-w*.25,h*.55,d/2+.06);
+ if(isF){
+  box(group,.62,.9,.62,darkMat,0,1.0,d/2+.15);
+  const fire=new THREE.Mesh(new THREE.SphereGeometry(.28,12,10),new THREE.MeshStandardMaterial({color:"#ff9e35",emissive:"#e44c10",emissiveIntensity:1.5}));
+  fire.position.set(0,1.12,d/2+.5);group.add(fire);
+  group.userData.fire=fire;
+ }else{
+  box(group,.32,.55,.12,woodMat,0,.32,d/2+.08);
+ }
+ const outline=new THREE.Mesh(new THREE.BoxGeometry(w+.38,h+1.5,d+.38),new THREE.MeshBasicMaterial({color:"#ffd87d",wireframe:true,transparent:true,opacity:.65}));
+ outline.visible=false;group.add(outline);group.userData.outline=outline;
+ const labelCanvas=document.createElement("canvas");labelCanvas.width=512;labelCanvas.height=80;
+ const c=labelCanvas.getContext("2d");c.fillStyle="#142a38";c.fillRect(0,0,512,80);
+ c.fillStyle="#fff";c.font="bold 30px Arial";c.textAlign="center";c.fillText(b.name,256,34);
+ c.fillStyle="#ffdb86";c.font="24px Arial";c.fillText("Nível "+b.level,256,64);
+ const tex=new THREE.CanvasTexture(labelCanvas);
+ const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthTest:false}));
+ sprite.scale.set(3.8,.6,1);sprite.position.set(0,h+1.6,0);group.add(sprite);group.userData.label=sprite;
+ cityRoot.add(group);clickable.push(group);return group;
+}
+function buildTree(x,z,s){
+ const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.09*s,.15*s,.6*s,6),woodMat);
+ trunk.position.set(x,.3*s,z);trunk.castShadow=true;cityRoot.add(trunk);
+ for(let i=0;i<3;i++){
+  const cone=new THREE.Mesh(new THREE.ConeGeometry(.55*s*(1-i*.13),1.0*s,7),mat(i===1?"#527f85":"#729ba0"));
+  cone.position.set(x,.65*s+i*.48*s,z);cone.castShadow=true;cityRoot.add(cone);
+  const cap=new THREE.Mesh(new THREE.ConeGeometry(.4*s*(1-i*.1),.25*s,7),snowMat);
+  cap.position.set(x,.98*s+i*.48*s,z);cityRoot.add(cap);
+ }
+}
+function buildRoad(){
+ const road= new THREE.Mesh(new THREE.PlaneGeometry(5,23),mat("#8fa9b1"));
+ road.rotation.x=-Math.PI/2;road.position.set(0,.025,5);cityRoot.add(road);
+ for(let i=-5;i<17;i+=2){
+  box(cityRoot,.06,.025,.8,snowMat,0,.05,i+5);
+ }
+}
+function init3D(){
+ const canvas=document.getElementById("view");
+ scene=new THREE.Scene();scene.background=new THREE.Color("#b9d7e2");scene.fog=new THREE.Fog("#c8dfe5",22,52);
+ camera=new THREE.PerspectiveCamera(43,1,.1,120);camera.position.set(14,17,20);
+ renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});
+ renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.75));
+ renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+ renderer.outputColorSpace=THREE.SRGBColorSpace;
+ scene.add(new THREE.HemisphereLight("#effaff","#667c86",2.1));
+ const sun=new THREE.DirectionalLight("#fff0d7",3);sun.position.set(-10,18,9);sun.castShadow=true;
+ sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-18;sun.shadow.camera.right=18;sun.shadow.camera.top=18;sun.shadow.camera.bottom=-18;scene.add(sun);
+ cityRoot=new THREE.Group();scene.add(cityRoot);
+ const ground=new THREE.Mesh(new THREE.PlaneGeometry(38,38),snowMat);ground.rotation.x=-Math.PI/2;ground.position.y=-.04;ground.receiveShadow=true;cityRoot.add(ground);
+ buildRoad();
+ for(let i=0;i<36;i++){
+  const angle=i*2.399,rad=10+(i%5)*1.15;
+  buildTree(Math.cos(angle)*rad,Math.sin(angle)*rad,.65+(i%4)*.12);
+ }
+ const mountainMat=mat("#e7f0f0");
+ for(let i=0;i<9;i++){
+  const cone=new THREE.Mesh(new THREE.ConeGeometry(3.2+(i%3),5+(i%4)*1.2,5),i%2?snowMat:iceMat);
+  cone.position.set(-20+i*5,2,-18-(i%3)*2);cone.rotation.y=i*.4;scene.add(cone);
+ }
+ rebuildCity();
+ controls=new OrbitControls(camera,renderer.domElement);
+ controls.target.set(0,1,0);controls.enableDamping=true;controls.dampingFactor=.06;
+ controls.minDistance=9;controls.maxDistance=36;controls.maxPolarAngle=Math.PI*.47;controls.minPolarAngle=.2;
+ raycaster=new THREE.Raycaster();pointer=new THREE.Vector2();
+ renderer.domElement.addEventListener("pointerup",onCityTap);
+ window.addEventListener("resize",resize3D);
+ resize3D();cityReady=true;animate();
+}
+function rebuildCity(){
+ if(!cityRoot)return;
+ const old=cityRoot.children.filter(o=>o.userData.buildingId);
+ old.forEach(o=>{cityRoot.remove(o);const i=clickable.indexOf(o);if(i>=0)clickable.splice(i,1)});
+ state.buildings.forEach(b=>addBuilding(b));
+ highlightSelection();
+}
+function highlightSelection(){
+ clickable.forEach(o=>{
+  const selected=o.userData.buildingId===selectedId;
+  o.userData.outline.visible=selected;
+  const b=state.buildings.find(x=>x.id===o.userData.buildingId);
+  if(b&&o.userData.label){
+   const canvas=o.userData.label.material.map.image;
+   const c=canvas.getContext("2d");c.clearRect(0,0,512,80);c.fillStyle=selected?"#6c4e20":"#142a38";c.fillRect(0,0,512,80);
+   c.fillStyle="#fff";c.font="bold 30px Arial";c.textAlign="center";c.fillText(b.name,256,34);
+   c.fillStyle="#ffdb86";c.font="24px Arial";c.fillText("Nível "+b.level,256,64);o.userData.label.material.map.needsUpdate=true;
+  }
+ });
+}
+function onCityTap(event){
+ const rect=renderer.domElement.getBoundingClientRect();
+ pointer.x=((event.clientX-rect.left)/rect.width)*2-1;
+ pointer.y=-((event.clientY-rect.top)/rect.height)*2+1;
+ raycaster.setFromCamera(pointer,camera);
+ const hits=raycaster.intersectObjects(clickable,true);
+ if(!hits.length)return;
+ let obj=hits[0].object;while(obj&&!obj.userData.buildingId)obj=obj.parent;
+ if(obj&&obj.userData.buildingId){selectedId=obj.userData.buildingId;updateSelection();highlightSelection();}
+}
+function resize3D(){
+ if(!renderer||!camera)return;
+ const el=document.getElementById("world"),w=el.clientWidth,h=el.clientHeight;
+ renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();
+}
+function animate(){
+ requestAnimationFrame(animate);
+ if(!renderer)return;
+ const t=performance.now()*.001;
+ clickable.forEach(o=>{if(o.userData.fire)o.userData.fire.scale.setScalar(.88+Math.sin(t*8)*.12)});
+ controls?.update();renderer.render(scene,camera);
+}
+try{init3D()}catch(error){
+ console.error(error);document.getElementById("loadError").style.display="block";
+}
+renderResources();renderHeroes();renderBuildings();updateSelection();
+
+function renderResources(){
+ ["wood","food","iron","gems"].forEach(k=>{
+  const top=document.getElementById(k);if(top)top.textContent=fmt(state[k]);
+  const inv=document.getElementById(k+"Inv");if(inv)inv.textContent=fmt(state[k]);
+ });
+ document.getElementById("furnaceLevel").textContent="FORNALHA "+state.furnace;
+}
+function renderHeroes(){
+ const root=document.getElementById("heroList");root.innerHTML="";
+ state.heroes.forEach(hero=>{
+  const card=document.createElement("article");card.className="hero";
+  const portrait=document.createElement("div");portrait.className="portrait";portrait.textContent=hero.icon;
+  portrait.style.background=`linear-gradient(145deg,${hero.color},#263e4d)`;
+  const info=document.createElement("div");
+  const name=document.createElement("div");name.className="heroName";name.textContent=hero.name;
+  const row=document.createElement("div");row.className="row";
+  const level=document.createElement("span");level.textContent="Nível "+hero.level;
+  const max=document.createElement("span");max.textContent=hero.level>=MAX_LEVEL?"MÁXIMO":"Máximo 80";
+  row.append(level,max);
+  const bar=document.createElement("div");bar.className="bar";
+  const fill=document.createElement("span");fill.style.width=(hero.level/MAX_LEVEL*100)+"%";bar.append(fill);
+  const power=document.createElement("p");power.className="small";power.textContent="Poder: "+fmt(hero.power*hero.level);
+  const actions=document.createElement("div");actions.className="heroActions";
+  const up=document.createElement("button");up.className="gold";up.disabled=hero.level>=MAX_LEVEL;
+  up.textContent=hero.level>=MAX_LEVEL?"NÍVEL MÁXIMO 80":"⬆ Melhorar";
+  up.addEventListener("click",()=>upgradeHero(hero.id));
+  const detail=document.createElement("button");detail.textContent="Detalhes";
+  detail.addEventListener("click",()=>toast(`${hero.name}: nível ${hero.level}/80 · poder ${fmt(hero.power*hero.level)}`));
+  actions.append(up,detail);info.append(name,row,bar,power,actions);card.append(portrait,info);root.append(card);
+ });
+}
+function upgradeHero(id){
+ const h=state.heroes.find(x=>x.id===id);if(!h)return;
+ if(h.level>=MAX_LEVEL){h.level=MAX_LEVEL;toast("Nível máximo 80.");}
+ else{h.level=Math.min(MAX_LEVEL,h.level+1);toast(h.name+" evoluiu para o nível "+h.level+".");}
+ save();renderHeroes();
+}
+function collectResources(){state.wood+=500;state.food+=500;state.iron+=200;save();renderResources();toast("Recursos recolhidos!");}
+function upgradeFurnace(){
+ const b=state.buildings.find(x=>x.id==="furnace"),wc=state.furnace*1000,ic=state.furnace*500;
+ if(state.wood<wc||state.iron<ic){toast("Recursos insuficientes: "+fmt(wc)+" madeira e "+fmt(ic)+" ferro.");return;}
+ state.wood-=wc;state.iron-=ic;state.furnace++;b.level=state.furnace;
+ save();renderResources();renderBuildings();updateSelection();rebuildCity();toast("Fornalha melhorada para o nível "+state.furnace+".");
+}
+function upgradeSelected(){
+ const b=state.buildings.find(x=>x.id===selectedId);if(!b)return;
+ if(b.id==="furnace"){upgradeFurnace();return;}
+ const cost=b.level*500;if(state.wood<cost){toast("Madeira insuficiente: "+fmt(cost)+".");return;}
+ state.wood-=cost;b.level++;save();renderResources();renderBuildings();updateSelection();rebuildCity();toast(b.name+" melhorada!");
+}
+function renderBuildings(){
+ const root=document.getElementById("buildingList");root.innerHTML="";
+ state.buildings.forEach(b=>{
+  const card=document.createElement("div");card.className="card buildingItem";
+  const symbol=document.createElement("div");symbol.className="symbol";symbol.textContent=b.icon;
+  const info=document.createElement("div");info.className="info";
+  const name=document.createElement("h3");name.textContent=b.name;
+  const desc=document.createElement("p");desc.className="small";desc.textContent="Nível "+b.level+" · próxima melhoria: "+fmt(b.level*500)+" madeira";
+  const select=document.createElement("button");select.textContent="Ver";
+  select.addEventListener("click",()=>{selectedId=b.id;updateSelection();highlightSelection();showScreen("cityScreen");});
+  info.append(name,desc);card.append(symbol,info,select);root.append(card);
+ });
+}
+function resetGame(){
+ if(!confirm("Apagar o progresso salvo?"))return;
+ state=structuredClone(INITIAL);save();renderResources();renderHeroes();renderBuildings();selectedId="furnace";updateSelection();rebuildCity();showScreen("cityScreen");toast("Progresso reiniciado.");
+}
 </script>
 </body>
 </html>
