@@ -1,0 +1,129 @@
+
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Whiteout 3D</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;overflow:hidden;background:#b8d9e8;font-family:Arial;color:white}
+#hud{position:fixed;top:12px;left:12px;z-index:2;background:#142535dd;padding:12px;border-radius:10px}
+#hud h2{margin:0 0 8px;font-size:18px}
+button{background:#287fa3;color:white;border:0;border-radius:7px;padding:10px;margin:3px}
+#help{position:fixed;bottom:12px;left:12px;background:#142535dd;padding:9px;border-radius:8px;font-size:12px}
+</style>
+</head>
+<body>
+<div id="hud">
+<h2>❄️ WHITEOUT 3D</h2>
+<div>🔥 Fornalha: Nível 1</div>
+<div>🪵 Madeira: <span id="wood">500</span></div>
+<div>🥩 Comida: 300</div>
+<button id="build">Construir casa (100)</button>
+</div>
+<div id="help">Arraste para girar a câmera • Use dois dedos para zoom</div>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
+
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0xb8d9e8);
+scene.fog=new THREE.Fog(0xb8d9e8,35,100);
+
+const camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,0.1,200);
+camera.position.set(18,22,25);
+
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(innerWidth,innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
+renderer.shadowMap.enabled=true;
+document.body.appendChild(renderer.domElement);
+
+scene.add(new THREE.HemisphereLight(0xe8f6ff,0x637080,2));
+const sun=new THREE.DirectionalLight(0xffffff,3);
+sun.position.set(-15,25,10);
+sun.castShadow=true;
+scene.add(sun);
+
+const ground=new THREE.Mesh(
+new THREE.PlaneGeometry(100,100),
+new THREE.MeshStandardMaterial({color:0xe7f1f4})
+);
+ground.rotation.x=-Math.PI/2;
+ground.receiveShadow=true;
+scene.add(ground);
+
+function box(x,y,z,w,h,d,color){
+const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshStandardMaterial({color}));
+m.position.set(x,y,z);
+m.castShadow=true;
+m.receiveShadow=true;
+scene.add(m);
+return m;
+}
+
+function house(x,z,color=0x8c9eaa){
+box(x,1,z,3,2,3,color);
+const roof=new THREE.Mesh(new THREE.ConeGeometry(2.5,1.5,4),new THREE.MeshStandardMaterial({color:0x465564}));
+roof.position.set(x,2.7,z);
+roof.rotation.y=Math.PI/4;
+roof.castShadow=true;
+scene.add(roof);
+box(x,0.8,z+1.52,0.7,1.5,0.08,0x493d32);
+box(x-0.8,1.3,z+1.54,0.55,0.55,0x9bd9f0);
+}
+
+for(let i=0;i<8;i++){
+house(-12+(i%4)*8,-10+Math.floor(i/4)*18,i%2?0x9cabb6:0x718d9d);
+}
+
+box(0,1.5,0,5,3,5,0x647783);
+box(0,3.6,0,4,1.5,4,0xdbe8ed);
+box(0,4.6,0,2,1,2,0x657d8a);
+box(0,0.7,2.55,1,1.4,0.1,0x49382e);
+
+const trees=[];
+for(let i=0;i<35;i++){
+const x=(Math.random()-.5)*65,z=(Math.random()-.5)*65;
+if(Math.abs(x)<10&&Math.abs(z)<10)continue;
+const trunk=box(x,0.8,z,0.45,1.6,0.45,0x66503d);
+const leaves=new THREE.Mesh(new THREE.ConeGeometry(1.7,4,6),new THREE.MeshStandardMaterial({color:0x466c70}));
+leaves.position.set(x,3,z);
+scene.add(leaves);
+}
+
+let wood=500;
+document.getElementById('build').onclick=()=>{
+if(wood<100){alert('Madeira insuficiente!');return}
+wood-=100;
+document.getElementById('wood').textContent=wood;
+house((Math.random()-.5)*18,(Math.random()-.5)*18,0xb3c2c9);
+};
+
+let down=false,lastX=0,lastY=0,angle=Math.PI/4,dist=34;
+renderer.domElement.addEventListener('pointerdown',e=>{down=true;lastX=e.clientX;lastY=e.clientY});
+addEventListener('pointerup',()=>down=false);
+addEventListener('pointermove',e=>{
+if(!down)return;
+angle-=(e.clientX-lastX)*0.008;
+dist=Math.max(12,Math.min(55,dist+(e.clientY-lastY)*0.08));
+lastX=e.clientX;lastY=e.clientY;
+});
+renderer.domElement.addEventListener('wheel',e=>{dist=Math.max(12,Math.min(55,dist+e.deltaY*.03))});
+
+function animate(){
+requestAnimationFrame(animate);
+camera.position.set(Math.sin(angle)*dist,dist*.65,Math.cos(angle)*dist);
+camera.lookAt(0,0,0);
+renderer.render(scene,camera);
+}
+animate();
+
+addEventListener('resize',()=>{
+camera.aspect=innerWidth/innerHeight;
+camera.updateProjectionMatrix();
+renderer.setSize(innerWidth,innerHeight);
+});
+</script>
+</body>
+</html>
