@@ -1,39 +1,45 @@
 
 /*
  * Whiteout Survival — Isometric Tile Ground
- * Base de terreno para o projeto Three.js.
+ * Terreno-base para o projeto Three.js.
  *
- * Inspirado no método de grade isométrica do:
+ * Referência de grade:
  * https://github.com/trevorscottprice/wos-tile-mosaic
  *
- * Este arquivo gera terreno provisório.
- * Para reproduzir o terreno original, substitua as cores
- * pelas texturas extraídas dos arquivos do jogo.
+ * IMPORTANTE:
+ * Este terreno é provisório. Não contém as texturas
+ * originais extraídas do Whiteout Survival.
  */
 
 export function createTileGround(THREE, options = {}) {
   const config = {
-    width: options.width ?? 62,
-    height: options.height ?? 62,
-    tileSize: options.tileSize ?? 1,
-    seed: options.seed ?? 2026,
+    width: 62,
+    height: 62,
+    tileSize: 1,
+    seed: 2026,
     ...options
   };
+
+  const width = Math.max(1, Math.floor(config.width));
+  const height = Math.max(1, Math.floor(config.height));
+  const tileSize = Math.max(0.01, config.tileSize);
+  const count = width * height;
 
   const group = new THREE.Group();
   group.name = "WhiteoutCityGround";
 
-  const random = (() => {
-    let seed = config.seed >>> 0;
-    return () => {
-      seed = (1664525 * seed + 1013904223) >>> 0;
-      return seed / 4294967296;
-    };
-  })();
+  // Gerador determinístico: o mesmo seed produz a mesma grade.
+  let seed = config.seed >>> 0;
 
+  function random() {
+    seed = (1664525 * seed + 1013904223) >>> 0;
+    return seed / 4294967296;
+  }
+
+  // Uma geometria quadrada compartilhada por todas as peças.
   const geometry = new THREE.PlaneGeometry(
-    config.tileSize,
-    config.tileSize
+    tileSize,
+    tileSize
   );
 
   geometry.rotateX(-Math.PI / 2);
@@ -57,59 +63,82 @@ export function createTileGround(THREE, options = {}) {
     })
   ];
 
-  const count = config.width * config.height;
-  const meshes = materials.map(material => {
+  // Cada material possui sua própria lista de instâncias.
+  const meshes = materials.map((material, i) => {
     const mesh = new THREE.InstancedMesh(
       geometry,
       material,
       count
     );
 
-    mesh.name = "SnowGroundTiles";
+    mesh.name = `SnowGroundTiles_${i}`;
     mesh.receiveShadow = true;
     mesh.castShadow = false;
+
     group.add(mesh);
     return mesh;
   });
 
   const dummy = new THREE.Object3D();
-  const tile = config.tileSize;
+  const used = [0, 0, 0, 0];
 
-  let index = 0;
-
-  for (let z = 0; z < config.height; z++) {
-    for (let x = 0; x < config.width; x++) {
-      // Grade regular; a câmera pode aplicar a perspectiva
-      // isométrica ao conjunto inteiro.
+  // A grade fica centralizada na origem.
+  for (let z = 0; z < height; z++) {
+    for (let x = 0; x < width; x++) {
       dummy.position.set(
-        (x - (config.width - 1) / 2) * tile,
+        (x - (width - 1) / 2) * tileSize,
         0,
-        (z - (config.height - 1) / 2) * tile
+        (z - (height - 1) / 2) * tileSize
       );
 
+      dummy.rotation.set(0, 0, 0);
+      dummy.scale.set(1, 1, 1);
       dummy.updateMatrix();
 
-      const variation = random();
+      const value = random();
+
       const materialIndex =
-        variation < 0.55 ? 0 :
-        variation < 0.78 ? 1 :
-        variation < 0.92 ? 2 : 3;
+        value < 0.55 ? 0 :
+        value < 0.78 ? 1 :
+        value < 0.92 ? 2 : 3;
 
       const mesh = meshes[materialIndex];
-      mesh.setMatrixAt(index, dummy.matrix);
-      index++;
+
+      // Índice independente para cada material.
+      mesh.setMatrixAt(
+        used[materialIndex],
+        dummy.matrix
+      );
+
+      used[materialIndex]++;
     }
   }
 
-  for (const mesh of meshes) {
+  // Define a quantidade real de instâncias usadas em cada mesh.
+  for (let i = 0; i < meshes.length; i++) {
+    const mesh = meshes[i];
+
+    mesh.count = used[i];
     mesh.instanceMatrix.needsUpdate = true;
+    mesh.computeBoundingBox();
+    mesh.computeBoundingSphere();
   }
 
   group.userData.grid = {
-    width: config.width,
-    height: config.height,
-    tileSize: tile,
-    seed: config.seed
+    width,
+    height,
+    tileSize,
+    seed: config.seed,
+    totalTiles: count
+  };
+
+  // Facilita a remoção posterior do terreno da cena.
+  group.userData.dispose = function () {
+    geometry.dispose();
+
+    for (const material of materials) {
+      material.dispose();
+    }
   };
 
   return group;
