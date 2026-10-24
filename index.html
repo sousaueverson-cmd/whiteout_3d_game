@@ -178,3 +178,57 @@ let t=49;setInterval(()=>{t=t>0?t-1:59;$('timer').textContent='00:'+String(t).pa
 </script>
 </body>
 </html>
+<script>
+(function () {
+  const HERO_MAX_LEVEL = 80;
+
+  function corrigirLimiteHerois() {
+    document.querySelectorAll('[data-a="hero"]').forEach(function (botao) {
+      const painel = botao.closest('section, article, div');
+      if (!painel) return;
+
+      const texto = painel.innerText || '';
+      if (!/herói|heroi|hero/i.test(texto)) return;
+
+      const correspondencia = texto.match(/nível\s*[: ]*\s*(\d+)/i);
+      if (!correspondencia) return;
+
+      const nivel = parseInt(correspondencia[1], 10);
+
+      if (nivel >= HERO_MAX_LEVEL) {
+        botao.disabled = true;
+        botao.textContent = 'NÍVEL MÁXIMO 80';
+        botao.style.opacity = '0.55';
+        botao.style.cursor = 'not-allowed';
+        botao.setAttribute('aria-disabled', 'true');
+      }
+    });
+  }
+
+  document.addEventListener('click', function (evento) {
+    const botao = evento.target.closest('[data-a="hero"]');
+    if (!botao) return;
+
+    const painel = botao.closest('section, article, div');
+    if (!painel) return;
+
+    const texto = painel.innerText || '';
+    const correspondencia = texto.match(/nível\s*[: ]*\s*(\d+)/i);
+
+    if (correspondencia &&
+        parseInt(correspondencia[1], 10) >= HERO_MAX_LEVEL) {
+      evento.preventDefault();
+      evento.stopImmediatePropagation();
+      botao.disabled = true;
+      botao.textContent = 'NÍVEL MÁXIMO 80';
+    }
+  }, true);
+
+  new MutationObserver(corrigirLimiteHerois).observe(
+    document.body,
+    { childList: true, subtree: true, characterData: true }
+  );
+
+  corrigirLimiteHerois();
+})();
+</script>
